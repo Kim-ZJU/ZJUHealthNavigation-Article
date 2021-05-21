@@ -3,6 +3,8 @@
 
 A2组的医疗资讯模块代码就放在这里啦，方便大家协作和版本控制～
 
+友情提示：用Android Studio打开此工程，选择Open Existing Project，选择此仓库里的navigationTest文件夹
+
 ## 进度
 - 2021-5-20
 - 实现资讯界面的资讯列表

@@ -19,6 +19,6 @@ Kim:
 - 完善失败，整不透mongoose这玩意儿
 - 参考文档：
 
-node.js操作数据库之MongoDB+mongoose篇 https://www.cnblogs.com/champyin/p/11666892.html
-Android 连接MongoDB与基本操作 https://blog.csdn.net/u012131769/article/details/40586153
-Mongoose中文文档 http://mongoosejs.net/docs/index.html
+node.js操作数据库之MongoDB+mongoose篇 https://www.cnblogs.com/champyin/p/11666892.html  
+Android 连接MongoDB与基本操作 https://blog.csdn.net/u012131769/article/details/40586153  
+Mongoose中文文档 http://mongoosejs.net/docs/index.html  

@@ -22,3 +22,8 @@ Kim:
 node.js操作数据库之MongoDB+mongoose篇 https://www.cnblogs.com/champyin/p/11666892.html  
 Android 连接MongoDB与基本操作 https://blog.csdn.net/u012131769/article/details/40586153  
 Mongoose中文文档 http://mongoosejs.net/docs/index.html  
+
+已经学习到的：
+- 先下载node.js，再下载mongodb,最后用IntelliJ IDEA Ultimate/别的什么软件打开Backend项目，在项目内用 `npm install mongoose` 下载mongoose
+- Mac下载mongodb最后一步新建/data/db时会提示无权限，请参考这个文档 https://blog.csdn.net/cq20110310/article/details/114929072  
+- 理论上IntelliJ IDEA Ultimate会在"mongoose"字段下出现提示要求安装mongoose，点按即可安装，不需要自己打开命令行输入

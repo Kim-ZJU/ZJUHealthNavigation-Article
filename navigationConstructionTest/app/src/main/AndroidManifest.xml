@@ -18,6 +18,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ui.user.user_info.UserInfoActivity" android:label="个人信息"/>
+        <activity android:name=".ui.user.health_info.UserHealthInfoActivity" android:label="健康档案"/>
+        <activity android:name=".ui.user.order.UserOrderActivity" android:label="我的挂号"/>
+        <activity android:name=".ui.user.collection.UserCollectionActivity" android:label="我的收藏"/>
+        <activity android:name=".ui.user.help.UserHelpActivity" android:label="帮助手册"/>
         <activity android:name=".ui.infoboard.ArticleDetailActivity">
             <intent-filter>
                 <action android:name="layout.activity"/>

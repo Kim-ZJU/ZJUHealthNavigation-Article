@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/component_user_info_card_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dip"
+        android:layout_marginTop="20dip"
+        android:text="学号"
+        android:textSize="25sp" />
+
+    <TextView
+        android:id="@+id/component_user_info_card_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="20dip"
+        android:layout_marginRight="45dp"
+        android:text="3180105091"
+        android:textColor="#000000"
+        android:textSize="25sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="20dip"
+        android:layout_marginRight="20dp"
+        android:text=">"
+        android:textColor="#999999"
+        android:textSize="25sp"
+        android:textStyle="bold" />
+    <!-- 加一条分割线 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.2dip"
+        android:layout_alignParentBottom="true"
+        android:background="#000000" />
+</RelativeLayout>

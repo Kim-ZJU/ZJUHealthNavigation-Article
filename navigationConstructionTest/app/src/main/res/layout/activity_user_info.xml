@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:navigationtest="http://schemas.android.com/apk/res/com.demo.navigationtest"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        navigationtest:user_info_card_component_content="img"
+        navigationtest:user_info_card_component_title="头像" />
+
+
+    <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        navigationtest:user_info_card_component_content="3180105091"
+        navigationtest:user_info_card_component_title="学号" />
+
+    <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        navigationtest:user_info_card_component_content="吴梦堉"
+        navigationtest:user_info_card_component_title="姓名" />
+
+    <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        navigationtest:user_info_card_component_content="男"
+        navigationtest:user_info_card_component_title="性别" />
+
+    <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        navigationtest:user_info_card_component_content="15306572568"
+        navigationtest:user_info_card_component_title="手机号码" />
+
+
+</LinearLayout>

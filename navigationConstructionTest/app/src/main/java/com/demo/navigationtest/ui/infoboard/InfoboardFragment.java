@@ -100,6 +100,7 @@ public class InfoboardFragment extends Fragment {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    Toast.makeText(view.getContext(), "查看资讯", Toast.LENGTH_SHORT).show();
                     if (mItemClickListener != null) {
                         mItemClickListener.onItemCLick(position, articleList.get(position));
                     }

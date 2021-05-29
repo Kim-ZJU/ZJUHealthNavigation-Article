@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:navigationtest="http://schemas.android.com/apk/res/com.demo.navigationtest"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:textColor="#000000"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        android:layout_marginTop="20dp"
+        android:text="常见问题类型"/>
+
+    <com.demo.navigationtest.ui.user.help.UserHelpCardComponent
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        navigationtest:user_help_card_component_title="预约挂号"
+        navigationtest:user_help_card_component_content="如何预约挂号？如何取消预约？"
+        >
+    </com.demo.navigationtest.ui.user.help.UserHelpCardComponent>
+    <com.demo.navigationtest.ui.user.help.UserHelpCardComponent
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    navigationtest:user_help_card_component_content="图文咨询、电话咨询"
+    navigationtest:user_help_card_component_title="咨询问诊" />
+
+    <com.demo.navigationtest.ui.user.help.UserHelpCardComponent
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        navigationtest:user_help_card_component_title="账号相关"
+        navigationtest:user_help_card_component_content="就诊人、个人资料、医疗档案"
+        />
+    <com.demo.navigationtest.ui.user.help.UserHelpCardComponent
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        navigationtest:user_help_card_component_title="医疗资讯"
+        navigationtest:user_help_card_component_content="如何收藏资讯，如何评价"
+        />
+    <com.demo.navigationtest.ui.user.help.UserHelpCardComponent
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        navigationtest:user_help_card_component_title="其他问题"
+        navigationtest:user_help_card_component_content="这里或许可以找到你关心的问题"
+        />
+
+</LinearLayout>

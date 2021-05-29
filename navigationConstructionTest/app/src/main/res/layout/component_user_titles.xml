@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/user_btn_icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        />
+
+    <TextView
+        android:id="@+id/user_btn_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dip"
+        android:layout_marginTop="10dip"
+        android:text="这是标题"
+        android:textColor="#000000"
+        android:textSize="25sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:textColor="#999999"
+        android:layout_marginTop="10dip"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="20dp"
+        android:text=">"/>
+    <!-- 加一条分割线 -->
+    <View
+        android:layout_marginTop="7dip"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="0.2dip"
+        android:background="#000000"/>
+</RelativeLayout>

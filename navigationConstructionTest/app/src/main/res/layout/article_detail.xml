@@ -139,19 +139,20 @@
 
                 <ImageView
                     android:id="@+id/article_mask"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginStart="35dp"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_marginTop="-8.5dp"
+                    android:layout_marginStart="25dp"
                     android:clickable="true"
                     android:focusable="true"
                     android:onClick="mask"
-                    android:src="@drawable/good" />
+                    android:src="@drawable/mask" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="-5dp"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="4dp"
                     android:textSize="20sp"
                     android:textColor="@color/colorBlack"
                     android:text="@string/article_mask" />

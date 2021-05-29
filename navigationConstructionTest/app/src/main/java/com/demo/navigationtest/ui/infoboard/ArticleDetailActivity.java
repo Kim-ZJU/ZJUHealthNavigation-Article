@@ -88,13 +88,13 @@ public class ArticleDetailActivity extends AppCompatActivity {
     //TODO: 7. 实现屏蔽功能
     public void mask(View view) {
         if (!mask_flag) {
-            ((ImageView) view).setImageResource(R.drawable.good_checked);
+            ((ImageView) view).setImageResource(R.drawable.mask_checked);
             mGoodView.setTextInfo("屏蔽成功", Color.parseColor("#ff941A"), 12);
             mGoodView.show(view);
             mask_flag = true;
         }
         else {
-            ((ImageView) view).setImageResource(R.drawable.good);
+            ((ImageView) view).setImageResource(R.drawable.mask);
             mask_flag = false;
         }
     }

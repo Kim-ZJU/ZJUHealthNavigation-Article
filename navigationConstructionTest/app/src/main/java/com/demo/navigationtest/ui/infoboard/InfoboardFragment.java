@@ -1,11 +1,7 @@
 package com.demo.navigationtest.ui.infoboard;
 
 import android.content.Intent;
-import android.content.pm.LabeledIntent;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -100,7 +96,6 @@ public class InfoboardFragment extends Fragment {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(view.getContext(), "查看资讯", Toast.LENGTH_SHORT).show();
                     if (mItemClickListener != null) {
                         mItemClickListener.onItemCLick(position, articleList.get(position));
                     }

@@ -42,20 +42,8 @@ public class ArticleDetailActivity extends AppCompatActivity {
                 comment_edit_text.setText("");
             }
         });
-        //TODO: 4. 实现分享功能，可参考"利用 Android 系统原生 API 实现分享功能" https://www.jianshu.com/p/1d4bd2c5ef69
+
         article_share = findViewById(R.id.article_share);
-        article_share.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                // 指定发送的内容
-                sendIntent.putExtra(Intent.EXTRA_TEXT, "文章很有用，快来浙大校医院导航APP看！");
-                // 指定发送内容的类型
-                sendIntent.setType("text/plain");
-                startActivity(Intent.createChooser(sendIntent, "分享到..."));
-            }
-        });
     }
     //copy自GoodView提供者的demo，仅实现了点赞效果，没有关联点赞数
     public void good(View view) {
@@ -80,5 +68,15 @@ public class ArticleDetailActivity extends AppCompatActivity {
         ((ImageView) view).setImageResource(R.drawable.bookmark_checked);
         mGoodView.setTextInfo("收藏成功", Color.parseColor("#ff941A"), 12);
         mGoodView.show(view);
+    }
+    //TODO: 4. 实现分享功能，可参考"利用 Android 系统原生 API 实现分享功能" https://www.jianshu.com/p/1d4bd2c5ef69
+    public void share(View view) {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        // 指定发送的内容
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "文章很有用，快来浙大校医院导航APP看！");
+        // 指定发送内容的类型
+        sendIntent.setType("text/plain");
+        startActivity(Intent.createChooser(sendIntent, "分享到..."));
     }
 }

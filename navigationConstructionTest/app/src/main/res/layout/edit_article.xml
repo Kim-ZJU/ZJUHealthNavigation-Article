@@ -19,7 +19,7 @@
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:title="资讯编辑"
-            app:titleMarginStart="170dp"></androidx.appcompat.widget.Toolbar>
+            app:titleMarginStart="170dp" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -129,16 +129,14 @@
         android:text="上传封面 ( 仅支持jpg,png,...格式 )" />
 
     <ImageButton
-        android:id="@+id/add_img_button"
-        android:layout_width="350dp"
-        android:layout_height="150dp"
-        android:layout_marginStart="30dp"
+        android:id="@+id/add_img_btn"
+        android:layout_width="260dp"
+        android:layout_height="130dp"
+        android:layout_gravity="center"
         android:layout_marginTop="20dp"
-        android:layout_marginEnd="30dp"
         android:background="#00000000"
-        android:src="@drawable/fruits"/>
-        <!--android:scaleType="fitXY"-->
-
+        android:src="@drawable/img_add"
+        android:onClick="uploadArticleImage" />
 
     <Button
         android:id="@+id/upload_article_button"

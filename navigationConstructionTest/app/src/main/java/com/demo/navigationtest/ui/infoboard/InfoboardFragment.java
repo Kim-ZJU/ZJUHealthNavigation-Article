@@ -7,30 +7,37 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import java.util.List;
 
 import com.demo.navigationtest.R;
-
-import java.util.List;
 
 public class InfoboardFragment extends Fragment {
 
     private InfoboardViewModel infoboardViewModel;
 
     private ArticleAdapter mArticleAdapter;
+    private FloatingActionButton newArticleFAB;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         infoboardViewModel =
                 ViewModelProviders.of(this).get(InfoboardViewModel.class);
         View root = inflater.inflate(R.layout.fragment_infoboard, container, false);
-
+        //给发布资讯按钮添加点击事件
+        newArticleFAB = root.findViewById(R.id.new_article_fab);
+        newArticleFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), EditArticleActivity.class);
+                startActivity(intent);
+            }
+        });
         //设置适配器
         mArticleAdapter = new ArticleAdapter(ArticleSet.getData());
         //"重写"实现item点击事件

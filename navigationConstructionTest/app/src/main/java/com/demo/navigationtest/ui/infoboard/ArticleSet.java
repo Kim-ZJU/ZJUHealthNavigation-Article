@@ -5,12 +5,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
-
-import okhttp3.FormBody;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class ArticleSet {
@@ -33,7 +29,7 @@ public class ArticleSet {
                             .build();
                     Response response = client.newCall(request).execute();
                     String responseBody = response.body().string();
-                    System.out.println(responseBody);
+                    //System.out.println(responseBody);
                     decodeResponseBody(responseBody);
                 }catch (Exception e){
                     e.printStackTrace();

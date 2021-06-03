@@ -45,6 +45,10 @@ public class InfoboardFragment extends Fragment {
             @Override
             public void onItemCLick(int position, Article article) {
                 Intent intent = new Intent(getContext(), ArticleDetailActivity.class);
+                //传入选中资讯的标题、日期、图片
+                intent.putExtra("title",article.title);
+                intent.putExtra("date", article.date);
+                //intent.putExtra("image", article.imageURI);
                 startActivity(intent);
             }
         });
@@ -96,7 +100,7 @@ public class InfoboardFragment extends Fragment {
             holder.article_title.setText(article.title);
             holder.article_tag.setText(article.tag);
             holder.article_date.setText(article.date);
-            //TODO:2.还没连接数据库，暂时先不绑定图片
+            //TODO:2.还没处理好上传图片问题，暂时先不绑定图片
             //holder.article_img.setImageURI(Uri.parse(article.imageURI));
 
             //点击某条资讯查看具体内容

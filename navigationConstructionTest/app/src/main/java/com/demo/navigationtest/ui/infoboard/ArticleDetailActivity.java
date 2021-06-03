@@ -9,28 +9,45 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.demo.navigationtest.R;
 import com.wx.goodview.GoodView;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONException;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 public class ArticleDetailActivity extends AppCompatActivity {
-    //引用这里的包 https://github.com/venshine/GoodView
-    private GoodView mGoodView;
-    private TextView like_num;
+
+    //资讯详情页的一些小组件
+    private GoodView mGoodView; //引用这里的包 https://github.com/venshine/GoodView
+    private TextView articleTitle, articleDate, articleContent, like_num;
+    //private ImageView articleImage;
     private boolean like_flag = false; //为了实现再次点击取消点赞的效果，需要flag判断是否点击过
     private EditText comment_edit_text;
     private Button comment_btn;
-    private boolean bookmark_flag = false;
-    private boolean mask_flag = false;
+    private boolean bookmark_flag = false, mask_flag = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.article_detail);
         this.getSupportActionBar().hide();
+        //获取选中资讯的标题、标签、日期、图片
+        Intent intent = getIntent();
+        articleTitle = findViewById(R.id.article_detail_title);
+        articleTitle.setText(intent.getStringExtra("title"));
+        articleDate = findViewById(R.id.article_detail_date);
+        articleDate.setText(intent.getStringExtra("date"));
+        articleContent = findViewById(R.id.article_content);
+        getArticleContent();
+
         mGoodView = new GoodView(this);
         //TODO：3. 实现评论功能
         comment_edit_text = findViewById(R.id.comment_edit_text);
@@ -43,6 +60,43 @@ public class ArticleDetailActivity extends AppCompatActivity {
                 comment_edit_text.setText("");
             }
         });
+    }
+    //连接数据库，根据选中资讯的标题获取资讯内容
+    private void getArticleContent () {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    OkHttpClient client =new OkHttpClient();
+                    RequestBody requestBody = new FormBody.Builder()
+                            .add("title", getIntent().getStringExtra("title"))
+                            .build();
+                    Request request = new Request.Builder()
+                            .post(requestBody)
+                            .url("http://10.0.2.2:3000/articles/fetch")
+                            .build();
+                    Response response = client.newCall(request).execute();
+                    String responseBody = response.body().string();
+                    decodeContent(responseBody);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+    //处理okhttp的response，剥离出content
+    private void decodeContent (String responseBody) {
+        try {
+            JSONObject contentJS = new JSONObject(responseBody);
+            String content = contentJS.getString("content");
+            JSONArray jsonArray=new JSONArray(content);
+            JSONObject jsonObject=jsonArray.getJSONObject(0);
+            String article_content = jsonObject.getString("article_content");
+            articleContent.setText(article_content);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
     //copy自GoodView提供者的demo，仅实现了点赞效果，没有关联点赞数
     //TODO: 4. 实现点赞功能

@@ -23,12 +23,20 @@ public class EditArticleActivity extends AppCompatActivity {
 
     ImageButton uploadArticleImageBtn;
     private Button submitArticleBtn;
+    private EditText editTextTitle, editTextContent, editTextTag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_article);
         this.getSupportActionBar().hide();
+
+        editTextTitle = findViewById(R.id.edit_text_title);
+        editTextTitle.getText();
+        editTextContent = findViewById(R.id.edit_text_content);
+        editTextContent.getText();
+        editTextTag.getText();
+        editTextTag = findViewById(R.id.edit_Tag_Content);
 
         uploadArticleImageBtn = findViewById(R.id.add_img_btn);
 

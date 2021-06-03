@@ -44,7 +44,6 @@ public class InfoboardFragment extends Fragment {
         mArticleAdapter.setOnItemClickListener(new ArticleAdapter.IOnItemClickListener() {
             @Override
             public void onItemCLick(int position, Article article) {
-                ArticleSet.getArticleList();
                 Intent intent = new Intent(getContext(), ArticleDetailActivity.class);
                 startActivity(intent);
             }

@@ -34,7 +34,7 @@
         android:text="标题编辑" />
 
     <EditText
-        android:id="@+id/editTextTitle"
+        android:id="@+id/edit_text_title"
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:layout_marginStart="30dp"
@@ -60,7 +60,7 @@
         android:text="内容编辑" />
 
     <EditText
-        android:id="@+id/editTextContent"
+        android:id="@+id/edit_text_content"
         android:layout_width="fill_parent"
         android:layout_height="150dp"
         android:layout_marginStart="30dp"

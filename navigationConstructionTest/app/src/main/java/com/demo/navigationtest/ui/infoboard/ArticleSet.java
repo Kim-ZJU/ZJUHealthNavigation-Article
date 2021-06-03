@@ -1,9 +1,18 @@
 package com.demo.navigationtest.ui.infoboard;
 
+import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 public class ArticleSet {
+
     public static List<Article> getData() {
         List<Article> result = new ArrayList<>();
         //TODO:1.此处需要连接数据库获得数据
@@ -15,4 +24,32 @@ public class ArticleSet {
         result.add(new Article("身体的这个地方颤动，中风的风险增加五倍！", "房颤", "4月13日", "https://tse1-mm.cn.bing.net/th/id/OIP.ENFjWn3Phh9fahzZcYhbdQHaEt?w=288&h=183&c=7&o=5&dpr=2&pid=1.7"));
         return result;
     }
+
+    public static void getArticleList() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    OkHttpClient client =new OkHttpClient();
+                    //MediaType MEDIA_TYPE_TEXT = MediaType.parse("text/plain;charset=utf-8");
+                    //RequestBody requestBody = RequestBody.create("title:A", MEDIA_TYPE_TEXT);
+                    FormBody requestBody = new FormBody.Builder()
+                            .add("title","A")
+                            .build();
+                    Request request = new Request.Builder()
+                            .post(requestBody)
+                            .url("http://10.0.2.2:3000/articles/fetch")
+                            .build();
+                    System.out.println(request);
+                    Response response = client.newCall(request).execute();
+                    String result = response.body().string();
+                    System.out.println(result);
+                    //showData(Data);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
 }

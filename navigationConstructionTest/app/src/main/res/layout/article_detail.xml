@@ -22,6 +22,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <ScrollView
+        android:id="@+id/up_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="60dp">
@@ -63,6 +64,7 @@
                 android:layout_marginEnd="20dp"
                 android:lineSpacingExtra="2dp"
                 android:layout_marginTop="10dp"
+                android:layout_marginBottom="105dp"
                 android:textSize="18sp"
                 android:textColor="@color/colorBlack"
                 android:text="@string/article_content_tmp"/>
@@ -75,7 +77,7 @@
         android:layout_width="match_parent"
         android:layout_height="105dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginTop="10dp">
+        android:layout_alignBottom="@+id/up_panel">
 
         <View
             android:layout_width="match_parent"

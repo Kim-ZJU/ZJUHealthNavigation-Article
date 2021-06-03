@@ -84,7 +84,7 @@ public class ArticleDetailActivity extends AppCompatActivity {
             }
         }).start();
     }
-    //处理okhttp的response，剥离出content
+    //处理okhttp的response，提取出资讯内容
     private void decodeContent (String responseBody) {
         try {
             JSONObject contentJS = new JSONObject(responseBody);
@@ -96,7 +96,6 @@ public class ArticleDetailActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
     //copy自GoodView提供者的demo，仅实现了点赞效果，没有关联点赞数
     //TODO: 4. 实现点赞功能

@@ -30,7 +30,7 @@
                 android:id="@+id/article_title"
                 android:layout_width="280dp"
                 android:layout_height="40dp"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textColor="@color/colorBlack"
                 android:text="这四种水果很多人吃错了！" />
 

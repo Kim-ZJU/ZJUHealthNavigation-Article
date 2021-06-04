@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import com.demo.navigationtest.ui.user.audit.AuditCommentActivity;
 import com.demo.navigationtest.ui.user.collection.UserCollectionActivity;
 import com.demo.navigationtest.ui.user.health_info.UserHealthInfoActivity;
 import com.demo.navigationtest.ui.user.help.UserHelpActivity;
@@ -52,6 +53,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.user_info:
                 intent = new Intent(MainActivity.this, UserInfoActivity.class);
+                break;
+            case R.id.audits:
+                intent = new Intent(MainActivity.this, AuditCommentActivity.class);
                 break;
         }
         if(intent != null)

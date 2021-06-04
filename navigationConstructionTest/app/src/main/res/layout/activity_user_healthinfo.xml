@@ -1,17 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:navigationtest="http://schemas.android.com/apk/res/com.demo.navigationtest"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:textColor="#000000"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        android:layout_marginTop="20dp"
+        android:text="健康档案"/>
 
     <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="80dp"
+        navigationtest:user_info_card_component_content="请选择性别"
+        navigationtest:user_info_card_component_title="性别" />
 
-        />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="healthInfo"/>
+    <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        navigationtest:user_info_card_component_content="请选择血型"
+        navigationtest:user_info_card_component_title="血型" />
+
+    <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        navigationtest:user_info_card_component_content="请选择"
+        navigationtest:user_info_card_component_title="RH血型阴性" />
+
+    <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        navigationtest:user_info_card_component_content="请选择民族"
+        navigationtest:user_info_card_component_title="民族" />
+
+    <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        navigationtest:user_info_card_component_content="请选择婚姻状况"
+        navigationtest:user_info_card_component_title="婚姻状况" />
+
+    <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        navigationtest:user_info_card_component_content="请选择文化程度"
+        navigationtest:user_info_card_component_title="文化程度" />
+    <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        navigationtest:user_info_card_component_content="请选择"
+        navigationtest:user_info_card_component_title="户口所在地" />
+    <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        navigationtest:user_info_card_component_content="请选择"
+        navigationtest:user_info_card_component_title="医疗支付类型" />
 
 </LinearLayout>

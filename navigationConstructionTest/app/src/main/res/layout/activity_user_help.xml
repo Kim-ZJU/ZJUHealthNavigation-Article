@@ -13,6 +13,7 @@
         android:layout_marginTop="20dp"
         android:text="常见问题类型"/>
 
+
     <com.demo.navigationtest.ui.user.help.UserHelpCardComponent
         android:layout_width="match_parent"
         android:layout_height="100dp"
@@ -20,6 +21,8 @@
         navigationtest:user_help_card_component_content="如何预约挂号？如何取消预约？"
         >
     </com.demo.navigationtest.ui.user.help.UserHelpCardComponent>
+
+
     <com.demo.navigationtest.ui.user.help.UserHelpCardComponent
     android:layout_width="match_parent"
     android:layout_height="100dp"

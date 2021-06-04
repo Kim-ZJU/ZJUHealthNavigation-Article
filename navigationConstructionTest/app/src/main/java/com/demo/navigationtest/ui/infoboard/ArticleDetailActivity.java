@@ -1,7 +1,9 @@
 package com.demo.navigationtest.ui.infoboard;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,12 +13,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.demo.navigationtest.LoginActivity;
+import com.demo.navigationtest.MyRequest;
 import com.demo.navigationtest.R;
 import com.wx.goodview.GoodView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONException;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -46,7 +55,8 @@ public class ArticleDetailActivity extends AppCompatActivity {
         articleDate = findViewById(R.id.article_detail_date);
         articleDate.setText(intent.getStringExtra("date"));
         articleContent = findViewById(R.id.article_content);
-        getArticleContent();
+        FetchArticleContent fetchArticleContent = new FetchArticleContent();
+        fetchArticleContent.execute();
 
         mGoodView = new GoodView(this);
         //TODO：3. 实现评论功能
@@ -61,42 +71,43 @@ public class ArticleDetailActivity extends AppCompatActivity {
             }
         });
     }
+
     //连接数据库，根据选中资讯的标题获取资讯内容
-    private void getArticleContent () {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try{
-                    OkHttpClient client =new OkHttpClient();
-                    RequestBody requestBody = new FormBody.Builder()
-                            .add("title", getIntent().getStringExtra("title"))
-                            .build();
-                    Request request = new Request.Builder()
-                            .post(requestBody)
-                            .url("http://10.0.2.2:3000/articles/fetch")
-                            .build();
-                    Response response = client.newCall(request).execute();
-                    String responseBody = response.body().string();
-                    decodeContent(responseBody);
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
+    class FetchArticleContent extends AsyncTask<Void, Void, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+
+            SharedPreferences sp = getSharedPreferences("token",0);
+            String token = sp.getString("token",null);
+            if (token == null){
+                Intent intent = new Intent(ArticleDetailActivity.this, LoginActivity.class);
+                startActivity(intent);
             }
-        }).start();
-    }
-    //处理okhttp的response，提取出资讯内容
-    private void decodeContent (String responseBody) {
-        try {
-            JSONObject contentJS = new JSONObject(responseBody);
-            String content = contentJS.getString("content");
-            JSONArray jsonArray=new JSONArray(content);
-            JSONObject jsonObject=jsonArray.getJSONObject(0);
-            String article_content = jsonObject.getString("article_content");
-            articleContent.setText(article_content);
-        } catch (JSONException e) {
-            e.printStackTrace();
+            Map<String, String> params = new HashMap<>();
+            params.put("title", articleTitle.getText().toString());
+            return MyRequest.myPost("/articles/fetch", params, token);
+        }
+
+        @Override
+        protected void onPostExecute(String fetchDetailResult) {
+            try{
+                JSONObject contentJS = new JSONObject(fetchDetailResult);
+                String content = contentJS.getString("content");
+                JSONArray jsonArray=new JSONArray(content);
+                JSONObject jsonObject=jsonArray.getJSONObject(0);
+                String article_content = jsonObject.getString("article_content");
+                articleContent.setText(article_content);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
+
     //copy自GoodView提供者的demo，仅实现了点赞效果，没有关联点赞数
     //TODO: 4. 实现点赞功能
     public void good(View view) {

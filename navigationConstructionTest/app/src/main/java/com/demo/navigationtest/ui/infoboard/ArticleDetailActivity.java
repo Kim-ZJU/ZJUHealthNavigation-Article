@@ -60,14 +60,24 @@ public class ArticleDetailActivity extends AppCompatActivity {
 
         mGoodView = new GoodView(this);
         //TODO：3. 实现评论功能
-        comment_edit_text = findViewById(R.id.comment_edit_text);
+        comment_edit_text = (EditText) findViewById(R.id.comment_edit_text);
         comment_btn = findViewById(R.id.comment_btn);
         comment_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(ArticleDetailActivity.this, "评论提交成功!等待审核中",
+                String text = "";   // 点击按钮后输出的提示信息
+                String comment_contex = comment_edit_text.getText().toString();
+                if (comment_contex.length() == 0) {
+                    text = "评论不能为空。";
+                } else if (comment_contex.length() > 200) {
+                    text = "评论过长，请重新编辑！";
+                } else {
+                    text = "评论提交成功！等待审核中。";
+                    // TODO 提交评论到后端
+                }
+                Toast.makeText(ArticleDetailActivity.this, text,
                         Toast.LENGTH_SHORT).show();
-                comment_edit_text.setText("");
+                comment_edit_text.setText("");  // 清空评论区
             }
         });
     }

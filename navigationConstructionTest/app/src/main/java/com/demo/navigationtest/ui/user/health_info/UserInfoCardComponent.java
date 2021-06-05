@@ -18,10 +18,11 @@ public class UserInfoCardComponent extends RelativeLayout {
     private String namespace = "http://schemas.android.com/apk/res/com.demo.navigationtest";
     private String title;
     private String content;
+    private View view;
     public UserInfoCardComponent(Context context, AttributeSet attrs){
         super(context,attrs);
 
-        View view = View.inflate(context, R.layout.component_user_info_card,this);
+        view = View.inflate(context, R.layout.component_user_info_card,this);
         title = attrs.getAttributeValue(namespace, "user_info_card_component_title");
         content = attrs.getAttributeValue(namespace,"user_info_card_component_content");
         titleView = view.findViewById(R.id.component_user_info_card_title);
@@ -32,5 +33,10 @@ public class UserInfoCardComponent extends RelativeLayout {
         if(content!=null){
             contentView.setText(content);
         }
+    }
+
+    public void setContent(String str){
+        contentView = view.findViewById(R.id.component_user_info_card_content);
+        contentView.setText(str);
     }
 }

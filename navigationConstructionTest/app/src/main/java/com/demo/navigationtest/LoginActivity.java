@@ -69,9 +69,9 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(Void... voids) {
             Map<String, String> params = new HashMap<>();
-            params.put("studentId", studentId);
+            params.put("phoneNumber", studentId);
             params.put("password", password);
-            String s = MyRequest.myLogin("/users/login",params);
+            String s = MyRequest.myLogin("/users/login", params);
             return s;
         }
 
@@ -84,20 +84,22 @@ public class LoginActivity extends AppCompatActivity {
                 String code = result.getString("code");
                 if (code.equals("200")) {
                     String token = result.getString("token");
+                    String role = result.getString("role");
 
                     //保存token
-                    SharedPreferences userToken = getSharedPreferences("token",0);
+                    SharedPreferences userToken = getSharedPreferences("token", 0);
                     SharedPreferences.Editor editor = userToken.edit();
-                    editor.putString("token",token);
+                    editor.putString("token", token);
+                    editor.putString("role", role);
                     editor.apply();
 
                     System.out.println(token);
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
-                }else if(code.equals("404")){
-                    Toast.makeText(LoginActivity.this,"用户不存在",Toast.LENGTH_SHORT).show();
-                }else if(code.equals("400")){
-                    Toast.makeText(LoginActivity.this,"用户密码错误",Toast.LENGTH_SHORT).show();
+                } else if (code.equals("404")) {
+                    Toast.makeText(LoginActivity.this, "用户不存在", Toast.LENGTH_SHORT).show();
+                } else if (code.equals("400")) {
+                    Toast.makeText(LoginActivity.this, "用户密码错误", Toast.LENGTH_SHORT).show();
                 }
             } catch (Exception e) {
                 System.out.println(e);

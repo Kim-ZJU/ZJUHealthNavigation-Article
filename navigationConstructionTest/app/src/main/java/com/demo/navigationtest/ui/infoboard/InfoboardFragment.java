@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,7 +24,9 @@ import com.demo.navigationtest.MyRequest;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.demo.navigationtest.R;
 
@@ -39,6 +42,7 @@ public class InfoboardFragment extends Fragment {
     private ArticleAdapter mArticleAdapter;
     private FloatingActionButton newArticleFAB;
     RecyclerView articleRV;
+    SearchView articleSV;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -79,6 +83,44 @@ public class InfoboardFragment extends Fragment {
         });
         //添加RecyclerView展示资讯列表
         articleRV = root.findViewById(R.id.article_rv);
+
+        //添加SearchView实现资讯标题搜索功能
+        articleSV = (SearchView) root.findViewById(R.id.article_search);
+        articleSV.setIconifiedByDefault(true);
+        articleSV.setQueryHint("请输入查找内容");
+        articleSV.setSubmitButtonEnabled(true);
+        ImageView mSearchGoBtn = articleSV.findViewById(R.id.search_go_btn);
+
+        articleSV.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //Snackbar.make(mSearchGoBtn,query,Snackbar.LENGTH_SHORT).show();
+                final String finalquery = query;
+                mArticleList.clear();
+                class SearchArticleList extends FetchArticleList{
+                    @Override
+                    protected String doInBackground(Void... voids) {
+                        SharedPreferences sp = getActivity().getSharedPreferences("token",0);
+                        String token = sp.getString("token",null);
+                        if (token == null){
+                            Intent intent = new Intent(getContext(), LoginActivity.class);
+                            startActivity(intent);
+                        }
+                        Map<String, String> params = new HashMap<>();
+                        params.put("title", finalquery);
+                        return MyRequest.myPost("/articles/search", params, token);
+                    }
+                }
+                SearchArticleList searchArticleLists = new SearchArticleList();
+                searchArticleLists.execute();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
         return root;
     }
 

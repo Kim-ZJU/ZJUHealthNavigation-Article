@@ -16,4 +16,15 @@
         <attr name="user_help_card_component_content" format="string"/>
     </declare-styleable>
 
+    <declare-styleable name="UserCollectionCardComponent">
+        <attr name="user_collection_card_component_title" format="string"/>
+        <attr name="user_collection_card_component_content" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="UserOrderCardComponent">
+        <attr name="user_order_card_component_title" format="string"/>
+        <attr name="user_order_card_component_department" format="string"/>
+        <attr name="user_order_card_component_doctor" format="string"/>
+    </declare-styleable>
+
 </resources>

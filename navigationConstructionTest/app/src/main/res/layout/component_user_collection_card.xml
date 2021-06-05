@@ -1,41 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
-
     <TextView
-        android:id="@+id/component_user_info_card_title"
+        android:id="@+id/component_user_collection_card_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dip"
-        android:layout_marginTop="20dip"
-        android:text="性别"
-        android:textSize="25sp" />
-
-    <TextView
-        android:id="@+id/component_user_info_card_content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="20dip"
-        android:layout_marginRight="45dp"
-        android:text="男"
+        android:layout_marginLeft="5dip"
+        android:layout_marginTop="5dip"
+        android:text="收藏咨询标题"
         android:textColor="#000000"
-        android:textSize="25sp" />
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/component_user_collection_card_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/component_user_collection_card_title"
+        android:layout_marginLeft="6dip"
+        android:layout_marginTop="2dip"
+        android:text="收藏咨询内容"
+        android:textColor="#999999"
+        android:textSize="14sp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="20dip"
-        android:layout_marginRight="20dp"
+        android:textSize="30sp"
         android:text=">"
-        android:textColor="#999999"
-        android:textSize="25sp"
-        android:textStyle="bold" />
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"/>
+
     <!-- 加一条分割线 -->
     <View
         android:layout_width="match_parent"
         android:layout_height="0.2dip"
         android:layout_alignParentBottom="true"
+        android:layout_marginTop="7dip"
+        android:layout_marginBottom="546dp"
         android:background="#000000" />
 </RelativeLayout>

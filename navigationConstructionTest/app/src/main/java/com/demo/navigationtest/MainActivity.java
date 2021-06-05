@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.demo.navigationtest.ui.user.audit.AuditCommentActivity;
 import com.demo.navigationtest.ui.user.collection.UserCollectionActivity;
 import com.demo.navigationtest.ui.user.health_info.UserHealthInfoActivity;
 import com.demo.navigationtest.ui.user.help.UserHelpActivity;
@@ -18,12 +17,20 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+//        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+//        startActivity(intent);
+
         this.getSupportActionBar().hide();
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -52,10 +59,29 @@ public class MainActivity extends AppCompatActivity {
                 intent = new Intent(MainActivity.this,UserHelpActivity.class);
                 break;
             case R.id.user_info:
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        String url = "http://10.0.2.2:3000/users/fetchUserInfo";
+//
+//                        System.out.println(url);
+//
+//                        OkHttpClient client = new OkHttpClient();
+//                        try{
+//                            Request request = new Request.Builder()
+//                                    //.header("token","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHVkZW50SWQiOiIzMTgwMTA1MDkxIiwiaWF0IjoxNjIyNjI4MTc1LCJleHAiOjE2MjI2MzUzNzV9.VokDcHW4HWr8fCJVRjCCGl9RWEAMHbjKHgA4YGAWeSQ")
+//                                    .get().url(url).build();
+//                            System.out.println(request);
+//                            Response reponse = client.newCall(request).execute();
+//
+//                            System.out.println(reponse.body().string());
+//
+//                        }catch (Exception e){
+//                            System.out.println(e);
+//                        }
+//                    }
+//                }).start();
                 intent = new Intent(MainActivity.this, UserInfoActivity.class);
-                break;
-            case R.id.audits:
-                intent = new Intent(MainActivity.this, AuditCommentActivity.class);
                 break;
         }
         if(intent != null)

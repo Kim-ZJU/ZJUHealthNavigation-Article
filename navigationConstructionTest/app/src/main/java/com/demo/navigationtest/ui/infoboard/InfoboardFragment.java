@@ -1,28 +1,42 @@
 package com.demo.navigationtest.ui.infoboard;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.demo.navigationtest.LoginActivity;
+import com.demo.navigationtest.MyRequest;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import com.demo.navigationtest.R;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class InfoboardFragment extends Fragment {
 
     private InfoboardViewModel infoboardViewModel;
 
+    private List<Article> mArticleList = new ArrayList<>();
     private ArticleAdapter mArticleAdapter;
     private FloatingActionButton newArticleFAB;
+    RecyclerView articleRV;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -38,8 +52,12 @@ public class InfoboardFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+        //获取资讯列表
+        FetchArticleList fetchArticleList = new FetchArticleList();
+        fetchArticleList.execute();
         //设置适配器
-        mArticleAdapter = new ArticleAdapter(ArticleSet.getData());
+        mArticleAdapter = new ArticleAdapter(mArticleList);
         //"重写"实现item点击事件
         mArticleAdapter.setOnItemClickListener(new ArticleAdapter.IOnItemClickListener() {
             @Override
@@ -53,11 +71,54 @@ public class InfoboardFragment extends Fragment {
             }
         });
         //添加RecyclerView展示资讯列表
-        RecyclerView articleRV = root.findViewById(R.id.article_rv);
-        articleRV.setAdapter(mArticleAdapter);
-        articleRV.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
+        articleRV = root.findViewById(R.id.article_rv);
 
         return root;
+    }
+
+    //获取最新的十条资讯，以列表形式显示
+    class FetchArticleList extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+
+            SharedPreferences sp = getActivity().getSharedPreferences("token",0);
+            String token = sp.getString("token",null);
+            if (token == null){
+                Intent intent = new Intent(getContext(), LoginActivity.class);
+                startActivity(intent);
+            }
+            return MyRequest.myGet("/articles/init",token);
+        }
+
+        @Override
+        protected void onPostExecute(String articles) {
+            try{
+                JSONObject contentJS = new JSONObject(articles);
+                String content = contentJS.getString("content");
+                JSONArray jsonArray=new JSONArray(content);
+                for(int i=jsonArray.length()-1; i>=0; i--)
+                {
+                    JSONObject jsonObject=jsonArray.getJSONObject(i);
+                    String title=jsonObject.getString("title");
+                    String tag=jsonObject.getString("tag");
+                    String date=jsonObject.getString("date");
+                    String image=jsonObject.getString("image");
+                    mArticleList.add(new Article(title, tag, date, image));
+                }
+                //在网络线程里重新绘制RecyclerView
+                articleRV.setAdapter(mArticleAdapter);
+                LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
+                articleRV.setLayoutManager(layoutManager);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     //拓展RecyclerView.ViewHolder实现ArticleVH
@@ -90,7 +151,7 @@ public class InfoboardFragment extends Fragment {
         @Override
         public ArticleVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             return new ArticleVH(LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_article,parent,false));
+                    .inflate(R.layout.item_article, parent,false));
         }
 
         @Override

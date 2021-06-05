@@ -11,6 +11,4 @@
     <string name="article_comment">评论</string>
     <string name="article_comment_hint">请输入评论</string>
     <string name="new_article_fab">写新资讯</string>
-    <string name="comment_pass">已通过</string>
-    <string name="comment_fail">不通过</string>
 </resources>

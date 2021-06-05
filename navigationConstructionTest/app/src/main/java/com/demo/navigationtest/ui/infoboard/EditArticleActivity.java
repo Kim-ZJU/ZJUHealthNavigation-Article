@@ -1,16 +1,22 @@
 package com.demo.navigationtest.ui.infoboard;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.*;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.demo.navigationtest.LoginActivity;
 import com.demo.navigationtest.MainActivity;
+import com.demo.navigationtest.MyRequest;
 import com.demo.navigationtest.R;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -24,6 +30,8 @@ import org.json.JSONObject;
 
 import java.io.FileNotFoundException;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -37,6 +45,7 @@ public class EditArticleActivity extends AppCompatActivity {
     private Button submitArticleBtn;
     private EditText editTextTitle, editTextContent, editTextTag;
     private String articleDate;
+    private InsertArticle insertArticle = new InsertArticle();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +54,8 @@ public class EditArticleActivity extends AppCompatActivity {
         this.getSupportActionBar().hide();
         //绑定页面的各个小组件
         editTextTitle = findViewById(R.id.edit_text_title);
-        //editTextTitle.getText();
         editTextContent = findViewById(R.id.edit_text_content);
-        //editTextContent.getText();
         editTextTag = findViewById(R.id.edit_Tag_Content);
-        //editTextTag.getText();
         uploadArticleImageBtn = findViewById(R.id.add_img_btn);
         getArticleDate();
 
@@ -57,29 +63,42 @@ public class EditArticleActivity extends AppCompatActivity {
         submitArticleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                insertArticle();
                 AlertDialog.Builder builder = new Builder(EditArticleActivity.this);
                 builder.setIcon(null);//设置图标, 这里设为空值
                 builder.setTitle("提醒");
                 builder.setMessage("确定发布该资讯吗？");
                 builder.setPositiveButton("取消", new OnClickListener(){
-
                     public void onClick(DialogInterface arg0, int arg1){
-                        Toast.makeText(EditArticleActivity.this,"正文不能为空！",Toast.LENGTH_SHORT).show();
+                        finish();
                     }
                 });
-
                 builder.setNegativeButton("确定", new OnClickListener(){
                     public void onClick(DialogInterface arg0,int arg1){
-                        Toast.makeText(EditArticleActivity.this, "标签过长！", Toast.LENGTH_SHORT).show();
+                        String title = editTextTitle.getText().toString();
+                        String tag = editTextTag.getText().toString();
+                        String content = editTextContent.getText().toString();
+                        if (title.length() < 1)
+                            Toast.makeText(EditArticleActivity.this, "标题不能为空！", Toast.LENGTH_SHORT).show();
+                        else if (title.length() > 30)
+                            Toast.makeText(EditArticleActivity.this, "标题过长！", Toast.LENGTH_SHORT).show();
+                        else if (tag.length() < 1)
+                            Toast.makeText(EditArticleActivity.this, "标签不能为空！", Toast.LENGTH_SHORT).show();
+                        else if (tag.length() > 5)
+                            Toast.makeText(EditArticleActivity.this, "标签过长！", Toast.LENGTH_SHORT).show();
+                        else if (content.length() < 1)
+                            Toast.makeText(EditArticleActivity.this, "资讯内容不能为空！", Toast.LENGTH_SHORT).show();
+                        else if (content.length()>3000)
+                            Toast.makeText(EditArticleActivity.this, "资讯内容过长！", Toast.LENGTH_SHORT).show();
+                        else
+                            insertArticle.execute();
                     }
                 });
-
                 AlertDialog b = builder.create();
                 b.show();//显示对话框
             }
         });
     }
+
     //获取系统时间
     private void getArticleDate() {
         Calendar cd = Calendar.getInstance();
@@ -88,47 +107,47 @@ public class EditArticleActivity extends AppCompatActivity {
         articleDate = "".concat(String.valueOf(month)).concat("月")
                 .concat(String.valueOf(day)).concat("日");
     }
-    //发送post请求插入新资讯
-    private void insertArticle() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try{
-                    OkHttpClient client =new OkHttpClient();
-                    RequestBody requestBody = new FormBody.Builder()
-                            .add("title", editTextTitle.getText().toString())
-                            .add("tag", editTextTag.getText().toString())
-                            .add("date",articleDate)
-                            .add("image", "tmp")//TODO：1. 暂时不知道怎么处理图片
-                            .add("article_content", editTextContent.getText().toString())
-                            .build();
-                    System.out.println(requestBody);
-                    Request request = new Request.Builder()
-                            .post(requestBody)
-                            .url("http://10.0.2.2:3000/articles/insert")
-                            .build();
-                    Response response = client.newCall(request).execute();
-                    String responseBody = response.body().string();
-                    decodeInsertResponse(responseBody);
-                }catch (Exception e){
-                    e.printStackTrace();
+
+    //发送post请求插入新资讯,根据返回数据确定是否发布资讯成功
+    class InsertArticle extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+
+            SharedPreferences sp = getSharedPreferences("token",0);
+            String token = sp.getString("token",null);
+            if (token == null){
+                Intent intent = new Intent(EditArticleActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+            Map<String, String> params = new HashMap<>();
+            params.put("title", editTextTitle.getText().toString());
+            params.put("tag", editTextTag.getText().toString());
+            params.put("date",articleDate);
+            params.put("image", "tmp");
+            params.put("article_content", editTextContent.getText().toString());
+            return MyRequest.myPost("/articles/insert", params, token);
+        }
+
+        @Override
+        protected void onPostExecute(String insertResult) {
+            try{
+                JSONObject bodyJS = new JSONObject(insertResult);
+                String code = bodyJS.getString("code");
+                if (code.equals("0")) {
+                    Toast.makeText(EditArticleActivity.this, "发布成功！", Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    Toast.makeText(EditArticleActivity.this, "服务器错误，发布失败！", Toast.LENGTH_LONG).show();
                 }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        }).start();
-    }
-    //根据返回数据确定是否发布资讯成功
-    private void decodeInsertResponse(String responseBody) {
-        try {
-            JSONObject bodyJS = new JSONObject(responseBody);
-            String code = bodyJS.getString("code");
-            if (code.equals("0")) {
-                Toast.makeText(this, "发布成功！", Toast.LENGTH_SHORT).show();
-                finish();
-            } else {
-                Toast.makeText(this, "服务器错误，发布失败！", Toast.LENGTH_LONG).show();
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
     }
 

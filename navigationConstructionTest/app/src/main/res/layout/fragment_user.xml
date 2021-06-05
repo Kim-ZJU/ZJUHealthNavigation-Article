@@ -52,5 +52,14 @@
             navigationtest:user_titles_components_title="帮助手册">
         </com.demo.navigationtest.ui.user.UserBtnView>
 
+        <com.demo.navigationtest.ui.user.UserBtnView
+            android:id="@+id/audits"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:onClick="userPageClick"
+            navigationtest:user_titles_components_title="审核评论">
+        </com.demo.navigationtest.ui.user.UserBtnView>
+
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

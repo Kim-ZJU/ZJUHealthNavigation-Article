@@ -109,29 +109,22 @@ public class ArticleDetailActivity extends AppCompatActivity {
             Thread fetchUserName = new Thread() {
                 @Override
                 public void run() {
-//                    SharedPreferences sp = getSharedPreferences("token",0);
-//                    String token = sp.getString("token",null);
-//                    if (token == null){
-//                        Intent intent = new Intent(ArticleDetailActivity.this, LoginActivity.class);
-//                        startActivity(intent);
-//                    }
-//                    Map<String, String> params = new HashMap<>();
-//                    params.put("token", token);
-//                    String result = MyRequest.myPost("/users/fetchUserInfo", params, token);
-//                    // 解析出用户名
-//                    try{
-//                        JSONObject contentJS = new JSONObject(result);
-//                        String content = contentJS.getString("content");
-//                        JSONArray jsonArray=new JSONArray(content);
-//                        JSONObject jsonObject=jsonArray.getJSONObject(0);
-//                        String article_content = jsonObject.getString("article_content");
-//                        articleID = jsonObject.getString("_id");
-//                        articleContent.setText(article_content);
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-                    userName[0] = "UName";
-                    //这里写入子线程需要做的工作
+                    SharedPreferences sp = getSharedPreferences("token",0);
+                    String token = sp.getString("token",null);
+                    if (token == null){
+                        Intent intent = new Intent(ArticleDetailActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                    }
+                    String result = MyRequest.myGet("/users/fetchUserInfo", token);
+                    // 解析出用户名
+                    try{
+                        JSONObject contentJS = new JSONObject(result);
+                        String content = contentJS.getString("data");
+                        JSONObject userJS = new JSONObject(content);
+                        userName[0] = userJS.getString("phoneNumber");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             };
             fetchUserName.start();
@@ -144,7 +137,7 @@ public class ArticleDetailActivity extends AppCompatActivity {
             Map<String, String> params = new HashMap<>();
             params.put("articleID", articleID);
             params.put("status", "0");  // 待审核
-            params.put("user", userName[0]);   // TODO get right user name
+            params.put("user", userName[0]);
             params.put("date", articleDate.getText().toString());
             params.put("context", comment_contex);
 

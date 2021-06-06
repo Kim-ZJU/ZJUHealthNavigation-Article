@@ -7,58 +7,112 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:text="健康档案"
         android:textColor="#000000"
         android:textSize="26sp"
-        android:textStyle="bold"
-        android:layout_marginTop="20dp"
-        android:text="健康档案"/>
+        android:textStyle="bold" />
 
-    <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        navigationtest:user_info_card_component_content="请选择性别"
-        navigationtest:user_info_card_component_title="性别" />
+        android:layout_height="match_parent">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
 
-    <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        navigationtest:user_info_card_component_content="请选择血型"
-        navigationtest:user_info_card_component_title="血型" />
+            <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:id="@+id/user_health_blood_type"
+                android:onClick="healthInfoClicked"
+                navigationtest:user_info_card_component_content="请选择血型"
+                navigationtest:user_info_card_component_title="血型" />
 
-    <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        navigationtest:user_info_card_component_content="请选择"
-        navigationtest:user_info_card_component_title="RH血型阴性" />
+            <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:id="@+id/user_health_height"
+                android:onClick="healthInfoClicked"
+                navigationtest:user_info_card_component_content="请选择身高"
+                navigationtest:user_info_card_component_title="身高" />
 
-    <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        navigationtest:user_info_card_component_content="请选择民族"
-        navigationtest:user_info_card_component_title="民族" />
+            <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:id="@+id/user_health_weight"
+                android:onClick="healthInfoClicked"
+                navigationtest:user_info_card_component_content="请选择体重"
+                navigationtest:user_info_card_component_title="体重" />
 
-    <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        navigationtest:user_info_card_component_content="请选择婚姻状况"
-        navigationtest:user_info_card_component_title="婚姻状况" />
+            <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:id="@+id/user_health_RH"
+                android:onClick="healthInfoClicked"
+                navigationtest:user_info_card_component_content="请选择"
+                navigationtest:user_info_card_component_title="RH血型阴性" />
 
-    <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        navigationtest:user_info_card_component_content="请选择文化程度"
-        navigationtest:user_info_card_component_title="文化程度" />
-    <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        navigationtest:user_info_card_component_content="请选择"
-        navigationtest:user_info_card_component_title="户口所在地" />
-    <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        navigationtest:user_info_card_component_content="请选择"
-        navigationtest:user_info_card_component_title="医疗支付类型" />
+            <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:id="@+id/user_health_bust"
+                android:onClick="healthInfoClicked"
+                navigationtest:user_info_card_component_content="请选择胸围"
+                navigationtest:user_info_card_component_title="胸围" />
+
+            <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:id="@+id/user_health_waist"
+                android:onClick="healthInfoClicked"
+                navigationtest:user_info_card_component_content="请选择腰围"
+                navigationtest:user_info_card_component_title="腰围" />
+
+            <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:id="@+id/user_health_hipline"
+                android:onClick="healthInfoClicked"
+                navigationtest:user_info_card_component_content="请选择臀围"
+                navigationtest:user_info_card_component_title="臀围" />
+
+            <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:id="@+id/user_health_systolic"
+                android:onClick="healthInfoClicked"
+                navigationtest:user_info_card_component_content="请选择收缩压"
+                navigationtest:user_info_card_component_title="收缩压" />
+
+            <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:id="@+id/user_health_diastolic"
+                android:onClick="healthInfoClicked"
+                navigationtest:user_info_card_component_content="请选择舒张压"
+                navigationtest:user_info_card_component_title="舒张压" />
+
+            <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:id="@+id/user_health_allergy"
+                android:onClick="healthInfoClicked"
+                navigationtest:user_info_card_component_content="请选择"
+                navigationtest:user_info_card_component_title="药物过敏史" />
+
+            <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:id="@+id/user_health_inheritance"
+                android:onClick="healthInfoClicked"
+                navigationtest:user_info_card_component_content="请选择"
+                navigationtest:user_info_card_component_title="遗传病史" />
+        </LinearLayout>
+    </ScrollView>
+
 
 </LinearLayout>

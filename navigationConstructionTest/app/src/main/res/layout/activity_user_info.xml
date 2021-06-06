@@ -5,16 +5,17 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        navigationtest:user_info_card_component_content="img"
-        navigationtest:user_info_card_component_title="头像" />
+<!--    <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="80dp"-->
+<!--        navigationtest:user_info_card_component_content="img"-->
+<!--        navigationtest:user_info_card_component_title="头像" />-->
 
     <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:id="@+id/user_info_phone"
+        android:onClick="userInfoClicked"
         navigationtest:user_info_card_component_content=""
         navigationtest:user_info_card_component_title="手机号码" />
 
@@ -22,6 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:id="@+id/user_info_studentId"
+        android:onClick="userInfoClicked"
         navigationtest:user_info_card_component_content=""
         navigationtest:user_info_card_component_title="学号" />
 
@@ -29,6 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:id="@+id/user_info_name"
+        android:onClick="userInfoClicked"
         navigationtest:user_info_card_component_content=""
         navigationtest:user_info_card_component_title="姓名" />
 
@@ -36,10 +39,8 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:id="@+id/user_info_gender"
+        android:onClick="userInfoClicked"
         navigationtest:user_info_card_component_content=""
         navigationtest:user_info_card_component_title="性别" />
-
-
-
 
 </LinearLayout>

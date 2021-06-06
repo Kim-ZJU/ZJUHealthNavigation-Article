@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">navigationTest</string>
+    <string name="app_name">校医院健康导航</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>

@@ -82,6 +82,48 @@ public class ArticleDetailActivity extends AppCompatActivity {
         });
     }
 
+    //连接数据库，根据选中资讯的标题获取资讯图片和内容和ID
+    class FetchArticleContent extends AsyncTask<Void, Void, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+
+            SharedPreferences sp = getSharedPreferences("token",0);
+            String token = sp.getString("token",null);
+            if (token == null){
+                Intent intent = new Intent(ArticleDetailActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+            Map<String, String> params = new HashMap<>();
+            params.put("title", articleTitle.getText().toString());
+            return MyRequest.myPost("/articles/fetch", params, token);
+        }
+
+        @Override
+        protected void onPostExecute(String fetchDetailResult) {
+            try{
+                JSONObject contentJS = new JSONObject(fetchDetailResult);
+                String content = contentJS.getString("content");
+                JSONArray jsonArray=new JSONArray(content);
+                JSONObject jsonObject=jsonArray.getJSONObject(0);
+                String article_content = jsonObject.getString("article_content");
+                articleId = jsonObject.getString("_id");
+                articleContent.setText(article_content);
+                Bitmap item_img;
+                byte[] bitmapArray = Base64.decode(jsonObject.getString("image"), Base64.DEFAULT);
+                item_img = BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length);
+                articleImage.setImageBitmap(item_img);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    //连接数据库，插入评论内容
     class CreateComment extends AsyncTask<Void, Void, String> {
         private String comment_contex;
 
@@ -143,47 +185,6 @@ public class ArticleDetailActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String rst) {
             System.out.println(rst);
-        }
-    }
-
-    //连接数据库，根据选中资讯的标题获取资讯图片和内容和ID
-    class FetchArticleContent extends AsyncTask<Void, Void, String> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected String doInBackground(Void... voids) {
-
-            SharedPreferences sp = getSharedPreferences("token",0);
-            String token = sp.getString("token",null);
-            if (token == null){
-                Intent intent = new Intent(ArticleDetailActivity.this, LoginActivity.class);
-                startActivity(intent);
-            }
-            Map<String, String> params = new HashMap<>();
-            params.put("title", articleTitle.getText().toString());
-            return MyRequest.myPost("/articles/fetch", params, token);
-        }
-
-        @Override
-        protected void onPostExecute(String fetchDetailResult) {
-            try{
-                JSONObject contentJS = new JSONObject(fetchDetailResult);
-                String content = contentJS.getString("content");
-                JSONArray jsonArray=new JSONArray(content);
-                JSONObject jsonObject=jsonArray.getJSONObject(0);
-                String article_content = jsonObject.getString("article_content");
-                articleId = jsonObject.getString("_id");
-                articleContent.setText(article_content);
-                Bitmap item_img;
-                byte[] bitmapArray = Base64.decode(jsonObject.getString("image"), Base64.DEFAULT);
-                item_img = BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length);
-                articleImage.setImageBitmap(item_img);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -268,7 +269,6 @@ public class ArticleDetailActivity extends AppCompatActivity {
     }
     //TODO: 6. 实现分享功能，可参考"利用 Android 系统原生 API 实现分享功能" https://www.jianshu.com/p/1d4bd2c5ef69
     public void share(View view) {
-        //((ImageView) view).setImageResource(R.drawable.share);
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         // 指定发送的内容

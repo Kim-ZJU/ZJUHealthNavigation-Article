@@ -62,7 +62,8 @@ public class InfoboardFragment extends Fragment {
                 }
             }
         });
-        Toast.makeText(getContext(), "获取资讯列表中……", Toast.LENGTH_SHORT).show();
+        //图片较大，导致获取资讯有点慢，需要用户耐心等待
+        Toast.makeText(getContext(), "图片较大，数据传输需要时间哦！获取资讯列表中……", Toast.LENGTH_LONG).show();
         //获取资讯列表
         FetchArticleList fetchArticleList = new FetchArticleList();
         fetchArticleList.execute();
@@ -73,10 +74,9 @@ public class InfoboardFragment extends Fragment {
             @Override
             public void onItemCLick(int position, Article article) {
                 Intent intent = new Intent(getContext(), ArticleDetailActivity.class);
-                //传入选中资讯的标题、日期、图片
+                //传入选中资讯的标题、日期
                 intent.putExtra("title",article.title);
                 intent.putExtra("date", article.date);
-                //intent.putExtra("image", article.imageURI);
                 startActivity(intent);
             }
         });
@@ -118,6 +118,7 @@ public class InfoboardFragment extends Fragment {
                     String tag=jsonObject.getString("tag");
                     String date=jsonObject.getString("date");
                     String image=jsonObject.getString("image");
+                    //将Base64字符串解码成bitmap
                     Bitmap item_img;
                     byte[] bitmapArray = Base64.decode(image, Base64.DEFAULT);
                     item_img = BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length);
@@ -173,10 +174,6 @@ public class InfoboardFragment extends Fragment {
             holder.article_title.setText(article.title);
             holder.article_tag.setText(article.tag);
             holder.article_date.setText(article.date);
-            //TODO:2.还没处理好上传图片问题，暂时先不绑定图片
-            //Bitmap item_img;
-            //byte[] bitmapArray = Base64.decode(article.image.split(",")[1], Base64.DEFAULT);
-            //item_img = BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length);
             holder.article_img.setImageBitmap(article.image);
 
             //点击某条资讯查看具体内容

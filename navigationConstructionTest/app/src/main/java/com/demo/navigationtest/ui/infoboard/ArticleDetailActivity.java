@@ -2,9 +2,12 @@ package com.demo.navigationtest.ui.infoboard;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -39,7 +42,7 @@ public class ArticleDetailActivity extends AppCompatActivity {
     private GoodView mGoodView; //引用这里的包 https://github.com/venshine/GoodView
     private TextView articleTitle, articleDate, articleContent, like_num;
     private String articleID;
-    //private ImageView articleImage;
+    private ImageView articleImage;
     private boolean like_flag = false; //为了实现再次点击取消点赞的效果，需要flag判断是否点击过
     private EditText comment_edit_text;
     private Button comment_btn;
@@ -56,6 +59,7 @@ public class ArticleDetailActivity extends AppCompatActivity {
         articleTitle.setText(intent.getStringExtra("title"));
         articleDate = findViewById(R.id.article_detail_date);
         articleDate.setText(intent.getStringExtra("date"));
+        articleImage = findViewById(R.id.article_detail_img);
         articleContent = findViewById(R.id.article_content);
         FetchArticleContent fetchArticleContent = new FetchArticleContent();
         fetchArticleContent.execute();
@@ -150,7 +154,7 @@ public class ArticleDetailActivity extends AppCompatActivity {
         }
     }
 
-    //连接数据库，根据选中资讯的标题获取资讯内容
+    //连接数据库，根据选中资讯的标题获取资讯图片和内容
     class FetchArticleContent extends AsyncTask<Void, Void, String> {
         @Override
         protected void onPreExecute() {
@@ -181,6 +185,10 @@ public class ArticleDetailActivity extends AppCompatActivity {
                 String article_content = jsonObject.getString("article_content");
                 articleID = jsonObject.getString("_id");
                 articleContent.setText(article_content);
+                Bitmap item_img;
+                byte[] bitmapArray = Base64.decode(jsonObject.getString("image"), Base64.DEFAULT);
+                item_img = BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length);
+                articleImage.setImageBitmap(item_img);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

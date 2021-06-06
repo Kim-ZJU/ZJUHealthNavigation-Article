@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -37,6 +38,7 @@ public class ArticleDetailActivity extends AppCompatActivity {
     //资讯详情页的一些小组件
     private GoodView mGoodView; //引用这里的包 https://github.com/venshine/GoodView
     private TextView articleTitle, articleDate, articleContent, like_num;
+    private String articleId;
     //private ImageView articleImage;
     private boolean like_flag = false; //为了实现再次点击取消点赞的效果，需要flag判断是否点击过
     private EditText comment_edit_text;
@@ -72,7 +74,7 @@ public class ArticleDetailActivity extends AppCompatActivity {
         });
     }
 
-    //连接数据库，根据选中资讯的标题获取资讯内容
+    //连接数据库，根据选中资讯的标题获取资讯内容 与资讯id
     class FetchArticleContent extends AsyncTask<Void, Void, String> {
         @Override
         protected void onPreExecute() {
@@ -102,9 +104,52 @@ public class ArticleDetailActivity extends AppCompatActivity {
                 JSONObject jsonObject=jsonArray.getJSONObject(0);
                 String article_content = jsonObject.getString("article_content");
                 articleContent.setText(article_content);
+                articleId = jsonObject.getString("_id");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    //连接数据库，增加用户收藏
+    class AddArticleCollection extends AsyncTask<Void, Void, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            SharedPreferences sp = getSharedPreferences("token",0);
+            String token = sp.getString("token",null);
+            if (token == null){
+                Intent intent = new Intent(ArticleDetailActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+            Map<String, String> params = new HashMap<>();
+            params.put("_id", articleId);
+            return MyRequest.myPost("/users/collections/add", params, token);
+        }
+    }
+
+    //连接数据库，删除用户收藏
+    class RemoveArticleCollection extends AsyncTask<Void, Void, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            SharedPreferences sp = getSharedPreferences("token",0);
+            String token = sp.getString("token",null);
+            if (token == null){
+                Intent intent = new Intent(ArticleDetailActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+            Map<String, String> params = new HashMap<>();
+            params.put("_id", articleId);
+            return MyRequest.myPost("/users/collections/delete", params, token);
         }
     }
 
@@ -125,7 +170,8 @@ public class ArticleDetailActivity extends AppCompatActivity {
             like_flag = false;
         }
     }
-    //copy自GoodView提供者的demo，仅实现了收藏效果，没有关联用户收藏栏
+
+    //实现了收藏效果，关联用户收藏栏
     //TODO: 5. 实现收藏功能
     public void bookmark(View view) {
         if (!bookmark_flag) {
@@ -133,14 +179,19 @@ public class ArticleDetailActivity extends AppCompatActivity {
             mGoodView.setTextInfo("收藏成功", Color.parseColor("#ff941A"), 12);
             mGoodView.show(view);
             bookmark_flag = true;
+            AddArticleCollection addArticleCollection = new AddArticleCollection();
+            addArticleCollection.execute();
         }
         else {
             ((ImageView) view).setImageResource(R.drawable.bookmark);
             bookmark_flag = false;
+            RemoveArticleCollection removeArticleCollection = new RemoveArticleCollection();
+            removeArticleCollection.execute();
         }
     }
     //TODO: 6. 实现分享功能，可参考"利用 Android 系统原生 API 实现分享功能" https://www.jianshu.com/p/1d4bd2c5ef69
     public void share(View view) {
+        ((ImageView) view).setImageResource(R.drawable.share);
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         // 指定发送的内容

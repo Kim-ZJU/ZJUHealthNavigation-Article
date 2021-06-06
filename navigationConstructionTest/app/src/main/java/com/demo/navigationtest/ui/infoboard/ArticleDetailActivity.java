@@ -116,6 +116,30 @@ public class ArticleDetailActivity extends AppCompatActivity {
                 byte[] bitmapArray = Base64.decode(jsonObject.getString("image"), Base64.DEFAULT);
                 item_img = BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length);
                 articleImage.setImageBitmap(item_img);
+                String likes = jsonObject.getString("likes");
+                like_num = findViewById(R.id.article_like_num);
+                like_num.setText(likes);    // 设置点赞数
+                // 设置点赞按钮
+                ImageView view = findViewById(R.id.article_like);
+                String is_like = contentJS.getString("is_like");
+                like_flag = is_like.equals("true");
+                if (like_flag)
+                    view.setImageResource(R.drawable.good_checked);
+                else view.setImageResource(R.drawable.good);
+                // 设置收藏按钮
+                view = findViewById(R.id.article_bookmark);
+                String is_favorite = contentJS.getString("is_favorite");
+                bookmark_flag = is_favorite.equals("true");
+                if (bookmark_flag)
+                    view.setImageResource(R.drawable.bookmark_checked);
+                else view.setImageResource(R.drawable.bookmark);
+                // 设置屏蔽按钮
+                view = findViewById(R.id.article_mask);
+                String is_mask = contentJS.getString("is_mask");
+                mask_flag = is_mask.equals("true");
+                if (mask_flag)
+                    view.setImageResource(R.drawable.mask_checked);
+                else view.setImageResource(R.drawable.mask);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -188,7 +212,7 @@ public class ArticleDetailActivity extends AppCompatActivity {
     }
 
     //连接数据库，增加用户收藏
-    class AddArticleCollection extends AsyncTask<Void, Void, String> {
+    /*class AddArticleCollection extends AsyncTask<Void, Void, String> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -206,10 +230,10 @@ public class ArticleDetailActivity extends AppCompatActivity {
             params.put("_id", articleId);
             return MyRequest.myPost("/users/collections/add", params, token);
         }
-    }
+    }*/
 
     //连接数据库，删除用户收藏
-    class RemoveArticleCollection extends AsyncTask<Void, Void, String> {
+    /*class RemoveArticleCollection extends AsyncTask<Void, Void, String> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -227,43 +251,105 @@ public class ArticleDetailActivity extends AppCompatActivity {
             params.put("_id", articleId);
             return MyRequest.myPost("/users/collections/delete", params, token);
         }
-    }
+    }*/
 
-    //copy自GoodView提供者的demo，仅实现了点赞效果，没有关联点赞数
     //实现点赞功能
     public void good(View view) {
         like_num = findViewById(R.id.article_like_num);
         if (!like_flag) {
             ((ImageView) view).setImageResource(R.drawable.good_checked);
             mGoodView.setText("+1");
-            int likes = Integer.parseInt(like_num.getText().toString()) + 1;
-            like_num.setText(String.valueOf(likes));
+            like_num.setText(String.valueOf(Integer.parseInt(like_num.getText().toString()) + 1));
             mGoodView.show(view);
             like_flag = true;
+            // 连接后端
+            Thread addLike = new Thread() {
+                @Override
+                public void run() {
+                    SharedPreferences sp = getSharedPreferences("token",0);
+                    String token = sp.getString("token",null);
+                    if (token == null){
+                        Intent intent = new Intent(ArticleDetailActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                    }
+                    Map<String, String> params = new HashMap<>();
+                    params.put("articleID", articleId);
+                    params.put("status", "1");
+                    String result = MyRequest.myPost("/articles/like", params, token);
+                }
+            };
+            addLike.start();
         }
         else {
             ((ImageView) view).setImageResource(R.drawable.good);
-            like_num.setText("0");
+            like_num.setText(String.valueOf(Integer.parseInt(like_num.getText().toString()) - 1));
             like_flag = false;
+            // 连接后端
+            Thread addLike = new Thread() {
+                @Override
+                public void run() {
+                    SharedPreferences sp = getSharedPreferences("token",0);
+                    String token = sp.getString("token",null);
+                    if (token == null){
+                        Intent intent = new Intent(ArticleDetailActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                    }
+                    Map<String, String> params = new HashMap<>();
+                    params.put("articleID", articleId);
+                    params.put("status", "0");
+                    String result = MyRequest.myPost("/articles/like", params, token);
+                }
+            };
+            addLike.start();
         }
     }
 
     //实现了收藏效果，关联用户收藏栏
-    //TODO: 5. 实现收藏功能
+    //TODO: 5. 实现收藏功能连接到用户
     public void bookmark(View view) {
         if (!bookmark_flag) {
             ((ImageView) view).setImageResource(R.drawable.bookmark_checked);
             mGoodView.setTextInfo("收藏成功", Color.parseColor("#ff941A"), 12);
             mGoodView.show(view);
             bookmark_flag = true;
-            AddArticleCollection addArticleCollection = new AddArticleCollection();
-            addArticleCollection.execute();
+            // 连接后端
+            Thread addLike = new Thread() {
+                @Override
+                public void run() {
+                    SharedPreferences sp = getSharedPreferences("token",0);
+                    String token = sp.getString("token",null);
+                    if (token == null){
+                        Intent intent = new Intent(ArticleDetailActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                    }
+                    Map<String, String> params = new HashMap<>();
+                    params.put("articleID", articleId);
+                    params.put("status", "1");
+                    String result = MyRequest.myPost("/articles/favorite", params, token);
+                }
+            };
+            addLike.start();
         }
         else {
             ((ImageView) view).setImageResource(R.drawable.bookmark);
             bookmark_flag = false;
-            RemoveArticleCollection removeArticleCollection = new RemoveArticleCollection();
-            removeArticleCollection.execute();
+            // 连接后端
+            Thread addLike = new Thread() {
+                @Override
+                public void run() {
+                    SharedPreferences sp = getSharedPreferences("token",0);
+                    String token = sp.getString("token",null);
+                    if (token == null){
+                        Intent intent = new Intent(ArticleDetailActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                    }
+                    Map<String, String> params = new HashMap<>();
+                    params.put("articleID", articleId);
+                    params.put("status", "0");
+                    String result = MyRequest.myPost("/articles/favorite", params, token);
+                }
+            };
+            addLike.start();
         }
     }
     //TODO: 6. 实现分享功能，可参考"利用 Android 系统原生 API 实现分享功能" https://www.jianshu.com/p/1d4bd2c5ef69
@@ -276,17 +362,51 @@ public class ArticleDetailActivity extends AppCompatActivity {
         sendIntent.setType("text/plain");
         startActivity(Intent.createChooser(sendIntent, "分享到..."));
     }
-    //TODO: 7. 实现屏蔽功能
+    //实现屏蔽功能到用户
     public void mask(View view) {
         if (!mask_flag) {
             ((ImageView) view).setImageResource(R.drawable.mask_checked);
             mGoodView.setTextInfo("屏蔽成功", Color.parseColor("#ff941A"), 12);
             mGoodView.show(view);
             mask_flag = true;
+            // 连接后端
+            Thread addLike = new Thread() {
+                @Override
+                public void run() {
+                    SharedPreferences sp = getSharedPreferences("token",0);
+                    String token = sp.getString("token",null);
+                    if (token == null){
+                        Intent intent = new Intent(ArticleDetailActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                    }
+                    Map<String, String> params = new HashMap<>();
+                    params.put("articleID", articleId);
+                    params.put("status", "1");
+                    String result = MyRequest.myPost("/articles/mask", params, token);
+                }
+            };
+            addLike.start();
         }
         else {
             ((ImageView) view).setImageResource(R.drawable.mask);
             mask_flag = false;
+            // 连接后端
+            Thread addLike = new Thread() {
+                @Override
+                public void run() {
+                    SharedPreferences sp = getSharedPreferences("token",0);
+                    String token = sp.getString("token",null);
+                    if (token == null){
+                        Intent intent = new Intent(ArticleDetailActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                    }
+                    Map<String, String> params = new HashMap<>();
+                    params.put("articleID", articleId);
+                    params.put("status", "0");
+                    String result = MyRequest.myPost("/articles/mask", params, token);
+                }
+            };
+            addLike.start();
         }
     }
 }

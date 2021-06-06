@@ -1,5 +1,6 @@
 package com.demo.navigationtest.ui.user;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +13,11 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.demo.navigationtest.MyRequest;
 import com.demo.navigationtest.R;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class UserFragment extends Fragment {
 
@@ -23,6 +28,12 @@ public class UserFragment extends Fragment {
         userViewModel =
                 ViewModelProviders.of(this).get(UserViewModel.class);
         View root = inflater.inflate(R.layout.fragment_user, container, false);
+        SharedPreferences sp = getContext().getSharedPreferences("token",0);
+        String role = sp.getString("role",null);
+        if (role.equals("doctor")) {    // 对医生显示审核评论入口
+            View auditView = root.findViewById(R.id.audits);
+            auditView.setVisibility(View.VISIBLE);
+        }
 //        final TextView textView = root.findViewById(R.id.text_user);
 //        userViewModel.getText().observe(this, new Observer<String>() {
 //            @Override

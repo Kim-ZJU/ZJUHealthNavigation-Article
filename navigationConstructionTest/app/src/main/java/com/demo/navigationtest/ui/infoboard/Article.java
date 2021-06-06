@@ -1,16 +1,12 @@
 package com.demo.navigationtest.ui.infoboard;
 
-import android.media.Image;
-import android.net.Uri;
-import java.util.Date;
-
 public class Article {
-    public String title, tag, date, imageURI;
+    public String title, tag, date, image;
 
-    public Article(String title, String tag, String date, String imageURI) {
+    public Article(String title, String tag, String date, String image) {
         this.title = title;
         this.tag = tag;
         this.date = date;
-        this.imageURI = imageURI;
+        this.image = image;
     }
 }

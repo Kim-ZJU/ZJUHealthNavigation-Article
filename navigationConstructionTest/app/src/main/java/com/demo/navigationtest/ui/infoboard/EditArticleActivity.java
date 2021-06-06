@@ -1,11 +1,16 @@
 package com.demo.navigationtest.ui.infoboard;
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Environment;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.*;
 import android.os.Bundle;
@@ -28,12 +33,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 import okhttp3.FormBody;
+import okhttp3.Headers;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -46,12 +59,14 @@ public class EditArticleActivity extends AppCompatActivity {
     private EditText editTextTitle, editTextContent, editTextTag;
     private String articleDate;
     private InsertArticle insertArticle = new InsertArticle();
+    private Bitmap bitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_article);
         this.getSupportActionBar().hide();
+
         //绑定页面的各个小组件
         editTextTitle = findViewById(R.id.edit_text_title);
         editTextContent = findViewById(R.id.edit_text_content);
@@ -89,8 +104,10 @@ public class EditArticleActivity extends AppCompatActivity {
                             Toast.makeText(EditArticleActivity.this, "资讯内容不能为空！", Toast.LENGTH_SHORT).show();
                         else if (content.length()>3000)
                             Toast.makeText(EditArticleActivity.this, "资讯内容过长！", Toast.LENGTH_SHORT).show();
-                        else
+                        else {
+                            Toast.makeText(EditArticleActivity.this, "数据上传中，请耐心等待……", Toast.LENGTH_LONG).show();
                             insertArticle.execute();
+                        }
                     }
                 });
                 AlertDialog b = builder.create();
@@ -125,12 +142,20 @@ public class EditArticleActivity extends AppCompatActivity {
                 Intent intent = new Intent(EditArticleActivity.this, LoginActivity.class);
                 startActivity(intent);
             }
+
+            //将上传的图片转成Base64的字符串
+            ByteArrayOutputStream byStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, byStream);
+            byte[] byteArray = byStream.toByteArray();
+            String imgString = Base64.encodeToString(byteArray, Base64.DEFAULT);
+            //封装参数
             Map<String, String> params = new HashMap<>();
             params.put("title", editTextTitle.getText().toString());
             params.put("tag", editTextTag.getText().toString());
             params.put("date",articleDate);
-            params.put("image", "tmp");
+            params.put("image", imgString);
             params.put("article_content", editTextContent.getText().toString());
+            //发送post请求
             return MyRequest.myPost("/articles/insert", params, token);
         }
 
@@ -178,12 +203,8 @@ public class EditArticleActivity extends AppCompatActivity {
             ContentResolver cr = this.getContentResolver();
             try {
                 //获取图片
-                Bitmap bitmap = BitmapFactory.decodeStream(cr.openInputStream(uri));
-                //uploadArticleImageBtn.setImageBitmap(bitmap);
-                Glide.with(this)
-                        .load(bitmap)
-                        .error(R.drawable.add_picture_failed)
-                        .into(uploadArticleImageBtn);
+                bitmap = BitmapFactory.decodeStream(cr.openInputStream(uri));
+                uploadArticleImageBtn.setImageBitmap(bitmap);
             } catch (FileNotFoundException e) {
                 Log.e("Exception", e.getMessage(),e);
             }

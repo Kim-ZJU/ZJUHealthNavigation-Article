@@ -115,7 +115,8 @@ public class ArticleDetailActivity extends AppCompatActivity {
         if (!like_flag) {
             ((ImageView) view).setImageResource(R.drawable.good_checked);
             mGoodView.setText("+1");
-            like_num.setText("1");
+            int likes = Integer.parseInt(like_num.getText().toString()) + 1;
+            like_num.setText(String.valueOf(likes));
             mGoodView.show(view);
             like_flag = true;
         }

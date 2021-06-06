@@ -54,7 +54,6 @@
                 android:id="@+id/article_detail_img"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:visibility="invisible"
                 android:src="@drawable/toothache"/>
 
             <TextView

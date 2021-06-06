@@ -43,6 +43,7 @@ public class InfoboardFragment extends Fragment {
     private FloatingActionButton newArticleFAB;
     RecyclerView articleRV;
     SearchView articleSV;
+    private String searchQuery;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -95,24 +96,16 @@ public class InfoboardFragment extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 //Snackbar.make(mSearchGoBtn,query,Snackbar.LENGTH_SHORT).show();
-                final String finalquery = query;
-                mArticleList.clear();
-                class SearchArticleList extends FetchArticleList{
-                    @Override
-                    protected String doInBackground(Void... voids) {
-                        SharedPreferences sp = getActivity().getSharedPreferences("token",0);
-                        String token = sp.getString("token",null);
-                        if (token == null){
-                            Intent intent = new Intent(getContext(), LoginActivity.class);
-                            startActivity(intent);
-                        }
-                        Map<String, String> params = new HashMap<>();
-                        params.put("title", finalquery);
-                        return MyRequest.myPost("/articles/search", params, token);
-                    }
+                if (query.isEmpty())
+                {
+                    articleSV.setQueryHint("请输入查找内容");
                 }
-                SearchArticleList searchArticleLists = new SearchArticleList();
-                searchArticleLists.execute();
+                else
+                {
+                    searchQuery = query;
+                    SearchArticleList searchArticleLists = new SearchArticleList();
+                    searchArticleLists.execute();
+                }
                 return true;
             }
 
@@ -168,6 +161,55 @@ public class InfoboardFragment extends Fragment {
             }
         }
     }
+
+    //展示资讯标题搜索结果
+    class SearchArticleList extends FetchArticleList{
+        @Override
+        protected String doInBackground(Void... voids) {
+            mArticleList.clear();
+            SharedPreferences sp = getActivity().getSharedPreferences("token",0);
+            String token = sp.getString("token",null);
+            if (token == null){
+                Intent intent = new Intent(getContext(), LoginActivity.class);
+                startActivity(intent);
+            }
+            Map<String, String> params = new HashMap<>();
+            params.put("title", searchQuery);
+            return MyRequest.myPost("/articles/search", params, token);
+        }
+        @Override
+        protected void onPostExecute(String articles) {
+            try{
+                JSONObject contentJS = new JSONObject(articles);
+                int code = contentJS.getInt("code");
+                if (code == 404)
+                {
+                    mArticleList.add(new Article("无相关结果", "","","tmp"));
+                }
+                else if(code == 200)
+                {
+                    String content = contentJS.getString("content");
+                    JSONArray jsonArray=new JSONArray(content);
+                    for(int i=jsonArray.length()-1; i>=0; i--)
+                    {
+                        JSONObject jsonObject=jsonArray.getJSONObject(i);
+                        String title=jsonObject.getString("title");
+                        String tag=jsonObject.getString("tag");
+                        String date=jsonObject.getString("date");
+                        String image=jsonObject.getString("image");
+                        mArticleList.add(new Article(title, tag, date, image));
+                    }
+                }
+                //在网络线程里重新绘制RecyclerView
+                articleRV.setAdapter(mArticleAdapter);
+                LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
+                articleRV.setLayoutManager(layoutManager);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     //拓展RecyclerView.ViewHolder实现ArticleVH
     private static class ArticleVH extends RecyclerView.ViewHolder {

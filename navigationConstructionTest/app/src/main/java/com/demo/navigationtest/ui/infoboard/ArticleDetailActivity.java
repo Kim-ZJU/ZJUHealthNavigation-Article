@@ -23,6 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONException;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,6 +38,7 @@ public class ArticleDetailActivity extends AppCompatActivity {
     //资讯详情页的一些小组件
     private GoodView mGoodView; //引用这里的包 https://github.com/venshine/GoodView
     private TextView articleTitle, articleDate, articleContent, like_num;
+    private String articleID;
     //private ImageView articleImage;
     private boolean like_flag = false; //为了实现再次点击取消点赞的效果，需要flag判断是否点击过
     private EditText comment_edit_text;
@@ -60,16 +62,99 @@ public class ArticleDetailActivity extends AppCompatActivity {
 
         mGoodView = new GoodView(this);
         //TODO：3. 实现评论功能
-        comment_edit_text = findViewById(R.id.comment_edit_text);
+        comment_edit_text = (EditText) findViewById(R.id.comment_edit_text);
         comment_btn = findViewById(R.id.comment_btn);
         comment_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(ArticleDetailActivity.this, "评论提交成功!等待审核中",
+                String text = "";   // 点击按钮后输出的提示信息
+                String comment_contex = comment_edit_text.getText().toString();
+                if (comment_contex.length() == 0) {
+                    text = "评论不能为空。";
+                } else if (comment_contex.length() > 200) {
+                    text = "评论过长，请重新编辑！";
+                } else {
+                    text = "评论提交成功！等待审核中。";
+                    // 提交评论到后端
+                    CreateComment createComment = new CreateComment(comment_contex);
+                    createComment.execute();
+                }
+                Toast.makeText(ArticleDetailActivity.this, text,
                         Toast.LENGTH_SHORT).show();
-                comment_edit_text.setText("");
+                comment_edit_text.setText("");  // 清空评论区
             }
         });
+    }
+
+    class CreateComment extends AsyncTask<Void, Void, String> {
+        private String comment_contex;
+
+        public CreateComment(String comment_contex) {
+            this.comment_contex = comment_contex;
+        }
+
+        @Override
+        protected void onPreExecute() { super.onPreExecute(); }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            SharedPreferences sp = getSharedPreferences("token",0);
+            String token = sp.getString("token",null);
+            if (token == null){
+                Intent intent = new Intent(ArticleDetailActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+            // 获取用户名
+            final String[] userName = {""};
+            Thread fetchUserName = new Thread() {
+                @Override
+                public void run() {
+//                    SharedPreferences sp = getSharedPreferences("token",0);
+//                    String token = sp.getString("token",null);
+//                    if (token == null){
+//                        Intent intent = new Intent(ArticleDetailActivity.this, LoginActivity.class);
+//                        startActivity(intent);
+//                    }
+//                    Map<String, String> params = new HashMap<>();
+//                    params.put("token", token);
+//                    String result = MyRequest.myPost("/users/fetchUserInfo", params, token);
+//                    // 解析出用户名
+//                    try{
+//                        JSONObject contentJS = new JSONObject(result);
+//                        String content = contentJS.getString("content");
+//                        JSONArray jsonArray=new JSONArray(content);
+//                        JSONObject jsonObject=jsonArray.getJSONObject(0);
+//                        String article_content = jsonObject.getString("article_content");
+//                        articleID = jsonObject.getString("_id");
+//                        articleContent.setText(article_content);
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+                    userName[0] = "UName";
+                    //这里写入子线程需要做的工作
+                }
+            };
+            fetchUserName.start();
+            try {
+                fetchUserName.join();   // 等待后端回复用户名
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            // 填充POST所需参数
+            Map<String, String> params = new HashMap<>();
+            params.put("articleID", articleID);
+            params.put("status", "0");  // 待审核
+            params.put("user", userName[0]);   // TODO get right user name
+            params.put("date", articleDate.getText().toString());
+            params.put("context", comment_contex);
+
+            return MyRequest.myPost("/articles/comments/insert", params, token);
+        }
+
+        @Override
+        protected void onPostExecute(String rst) {
+            System.out.println(rst);
+        }
     }
 
     //连接数据库，根据选中资讯的标题获取资讯内容
@@ -101,6 +186,7 @@ public class ArticleDetailActivity extends AppCompatActivity {
                 JSONArray jsonArray=new JSONArray(content);
                 JSONObject jsonObject=jsonArray.getJSONObject(0);
                 String article_content = jsonObject.getString("article_content");
+                articleID = jsonObject.getString("_id");
                 articleContent.setText(article_content);
             } catch (JSONException e) {
                 e.printStackTrace();

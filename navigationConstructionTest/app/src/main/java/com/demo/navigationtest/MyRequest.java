@@ -51,8 +51,9 @@ public class MyRequest {
                     .header("token",token)
                     .post(builder.build()).url(realUrl).build();
             System.out.println(request);
-            Response reponse = client.newCall(request).execute();
-            String result = reponse.body().string();
+            Response response = client.newCall(request).execute();
+            String result = response.body().string();
+            //System.out.println(result);
             return result;
         } catch (Exception e) {
             System.out.println(e);

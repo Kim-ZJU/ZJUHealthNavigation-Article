@@ -108,8 +108,7 @@ public class ArticleDetailActivity extends AppCompatActivity {
             try{
                 JSONObject contentJS = new JSONObject(fetchDetailResult);
                 String content = contentJS.getString("content");
-                JSONArray jsonArray=new JSONArray(content);
-                JSONObject jsonObject=jsonArray.getJSONObject(0);
+                JSONObject jsonObject=new JSONObject(content);
                 String article_content = jsonObject.getString("article_content");
                 articleId = jsonObject.getString("_id");
                 articleContent.setText(article_content);

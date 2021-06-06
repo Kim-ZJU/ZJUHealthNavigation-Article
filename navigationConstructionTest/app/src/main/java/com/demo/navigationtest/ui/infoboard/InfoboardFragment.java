@@ -2,8 +2,11 @@ package com.demo.navigationtest.ui.infoboard;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,7 +62,7 @@ public class InfoboardFragment extends Fragment {
                 }
             }
         });
-
+        Toast.makeText(getContext(), "获取资讯列表中……", Toast.LENGTH_SHORT).show();
         //获取资讯列表
         FetchArticleList fetchArticleList = new FetchArticleList();
         fetchArticleList.execute();
@@ -115,7 +118,10 @@ public class InfoboardFragment extends Fragment {
                     String tag=jsonObject.getString("tag");
                     String date=jsonObject.getString("date");
                     String image=jsonObject.getString("image");
-                    mArticleList.add(new Article(title, tag, date, image));
+                    Bitmap item_img;
+                    byte[] bitmapArray = Base64.decode(image, Base64.DEFAULT);
+                    item_img = BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length);
+                    mArticleList.add(new Article(title, tag, date, item_img));
                 }
                 //在网络线程里重新绘制RecyclerView
                 articleRV.setAdapter(mArticleAdapter);
@@ -168,7 +174,10 @@ public class InfoboardFragment extends Fragment {
             holder.article_tag.setText(article.tag);
             holder.article_date.setText(article.date);
             //TODO:2.还没处理好上传图片问题，暂时先不绑定图片
-            //holder.article_img.setImageURI(Uri.parse(article.imageURI));
+            //Bitmap item_img;
+            //byte[] bitmapArray = Base64.decode(article.image.split(",")[1], Base64.DEFAULT);
+            //item_img = BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length);
+            holder.article_img.setImageBitmap(article.image);
 
             //点击某条资讯查看具体内容
             holder.itemView.setOnClickListener(new View.OnClickListener() {

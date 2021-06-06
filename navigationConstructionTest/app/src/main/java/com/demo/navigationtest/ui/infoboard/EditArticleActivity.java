@@ -164,7 +164,7 @@ public class EditArticleActivity extends AppCompatActivity {
             try{
                 JSONObject bodyJS = new JSONObject(insertResult);
                 String code = bodyJS.getString("code");
-                if (code.equals("0")) {
+                if (code.equals("200")) {
                     Toast.makeText(EditArticleActivity.this, "发布成功！", Toast.LENGTH_SHORT).show();
                     finish();
                 } else {

@@ -61,7 +61,7 @@ public class ArticleDetailActivity extends AppCompatActivity {
         fetchArticleContent.execute();
 
         mGoodView = new GoodView(this);
-        //TODO：3. 实现评论功能
+        //实现评论功能
         comment_edit_text = (EditText) findViewById(R.id.comment_edit_text);
         comment_btn = findViewById(R.id.comment_btn);
         comment_btn.setOnClickListener(new View.OnClickListener() {
@@ -188,7 +188,7 @@ public class ArticleDetailActivity extends AppCompatActivity {
     }
 
     //copy自GoodView提供者的demo，仅实现了点赞效果，没有关联点赞数
-    //TODO: 4. 实现点赞功能
+    //实现点赞功能
     public void good(View view) {
         like_num = findViewById(R.id.article_like_num);
         if (!like_flag) {

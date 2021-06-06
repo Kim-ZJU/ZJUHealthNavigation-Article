@@ -11,30 +11,35 @@
         navigationtest:user_info_card_component_content="img"
         navigationtest:user_info_card_component_title="头像" />
 
+    <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:id="@+id/user_info_phone"
+        navigationtest:user_info_card_component_content=""
+        navigationtest:user_info_card_component_title="手机号码" />
 
     <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        navigationtest:user_info_card_component_content="3180105091"
+        android:id="@+id/user_info_studentId"
+        navigationtest:user_info_card_component_content=""
         navigationtest:user_info_card_component_title="学号" />
 
     <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        navigationtest:user_info_card_component_content="吴梦堉"
+        android:id="@+id/user_info_name"
+        navigationtest:user_info_card_component_content=""
         navigationtest:user_info_card_component_title="姓名" />
 
     <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        navigationtest:user_info_card_component_content="男"
+        android:id="@+id/user_info_gender"
+        navigationtest:user_info_card_component_content=""
         navigationtest:user_info_card_component_title="性别" />
 
-    <com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        navigationtest:user_info_card_component_content="15306572568"
-        navigationtest:user_info_card_component_title="手机号码" />
+
 
 
 </LinearLayout>

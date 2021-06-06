@@ -20,11 +20,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
-    EditText username;
+    EditText name;
+    EditText phoneNumber;
     EditText password;
     EditText age;
     EditText studentId;
     RadioGroup sex;
+    RadioGroup role;
     Button register;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,14 +35,15 @@ public class RegisterActivity extends AppCompatActivity {
         findViews();
         register.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String phone = username.getText().toString().trim();
+                String phone = phoneNumber.getText().toString().trim();
                 String pass = password.getText().toString().trim();
                 String agestr = age.getText().toString().trim();
                 String student = studentId.getText().toString().trim();
+                String nameStr = name.getText().toString().trim();
                 System.out.println(agestr);
                 String sexstr = ((RadioButton) RegisterActivity.this.findViewById(sex.getCheckedRadioButtonId())).getText().toString();
-
-                RegisterAsyncTask registerAsyncTask = new RegisterAsyncTask(phone, pass, agestr, sexstr, student);
+                String roleStr = ((RadioButton) RegisterActivity.this.findViewById(role.getCheckedRadioButtonId())).getText().toString();
+                RegisterAsyncTask registerAsyncTask = new RegisterAsyncTask(phone, pass, agestr, sexstr, student, nameStr, roleStr);
                 registerAsyncTask.execute();
 //                Toast.makeText(RegisterActivity.this, "注册成功", Toast.LENGTH_LONG).show();
             }
@@ -48,10 +51,12 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void findViews() {
-        username = (EditText) findViewById(R.id.usernameRegister);
+        phoneNumber = (EditText) findViewById(R.id.phoneNumberRegister);
+        name = (EditText) findViewById(R.id.nameRegister);
         password = (EditText) findViewById(R.id.passwordRegister);
         age = (EditText) findViewById(R.id.ageRegister);
         sex = (RadioGroup) findViewById(R.id.sexRegister);
+        role = (RadioGroup) findViewById(R.id.roleRegister);
         register = (Button) findViewById(R.id.Register);
         studentId = (EditText) findViewById(R.id.studentRegister);
     }
@@ -62,13 +67,17 @@ public class RegisterActivity extends AppCompatActivity {
         private String phone;
         private String gender;
         private String age;
+        private String name;
+        private String role;
 
-        public RegisterAsyncTask(String phone, String password, String age, String gender, String studentId) {
+        public RegisterAsyncTask(String phone, String password, String age, String gender, String studentId, String name, String role) {
             this.password = password;
             this.studentId = studentId;
             this.phone = phone;
             this.age = age;
             this.gender = gender;
+            this.name = name;
+            this.role = role;
         }
 
         @Override
@@ -80,10 +89,12 @@ public class RegisterActivity extends AppCompatActivity {
         protected String doInBackground(Void... voids) {
             Map<String, String> params = new HashMap<>();
             params.put("phoneNumber", phone);
+            params.put("name", name);
             params.put("studentId", studentId);
             params.put("password", password);
             params.put("age", age);
             params.put("gender", gender);
+            params.put("role", role.equals("学生") ? "student" : "doctor");
             String s = MyRequest.myLogin("/users/register", params);
             return s;
         }
@@ -97,11 +108,13 @@ public class RegisterActivity extends AppCompatActivity {
                 String code = result.getString("code");
                 if (code.equals("200")) {
                     String token = result.getString("token");
+                    String role = result.getString("role");
 
                     //保存token
                     SharedPreferences userToken = getSharedPreferences("token", 0);
                     SharedPreferences.Editor editor = userToken.edit();
                     editor.putString("token", token);
+                    editor.putString("role", role);
                     editor.apply();
 
                     System.out.println(token);

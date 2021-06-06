@@ -13,6 +13,7 @@ import com.demo.navigationtest.LoginActivity;
 import com.demo.navigationtest.MainActivity;
 import com.demo.navigationtest.MyRequest;
 import com.demo.navigationtest.R;
+import com.demo.navigationtest.ui.user.health_info.UserInfoCardComponent;
 
 import org.json.JSONObject;
 
@@ -24,6 +25,9 @@ public class UserInfoActivity extends AppCompatActivity {
 
         FetchUserInfo fetchUserInfo = new FetchUserInfo();
         fetchUserInfo.execute();
+
+        String role = getSharedPreferences("token",0).getString("role",null);
+        System.out.println(role);
 
     }
 
@@ -37,9 +41,7 @@ public class UserInfoActivity extends AppCompatActivity {
         protected String doInBackground(Void... voids) {
 
             SharedPreferences sp = getSharedPreferences("token",0);
-            System.out.println(sp);
             String token = sp.getString("token",null);
-            System.out.println(token);
             if(token == null){
                 Intent intent = new Intent(UserInfoActivity.this,LoginActivity.class);
                 startActivity(intent);
@@ -50,6 +52,19 @@ public class UserInfoActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String s) {
+            try{
+                JSONObject result = new JSONObject(s);
+                String code = result.getString("code");
+                if(code.equals("0")){
+                    JSONObject user = result.getJSONObject("data");
+
+                    UserInfoCardComponent studentIdComponent = (UserInfoCardComponent) findViewById(R.id.user_info_studentId);
+                    studentIdComponent.setContent(user.getString("studentId"));
+                }
+            }catch (Exception e){
+                System.out.println(e);
+            }
+
             System.out.println(s);
         }
     }

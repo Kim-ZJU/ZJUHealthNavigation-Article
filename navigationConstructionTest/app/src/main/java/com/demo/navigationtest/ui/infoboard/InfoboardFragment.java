@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
@@ -48,8 +50,13 @@ public class InfoboardFragment extends Fragment {
         newArticleFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(), EditArticleActivity.class);
-                startActivity(intent);
+                String role = getContext().getSharedPreferences("token", 0).getString("role", null);
+                if (role.equals("student"))
+                    Toast.makeText(getContext(), "您没有权限发布资讯！", Toast.LENGTH_SHORT).show();
+                else {
+                    Intent intent = new Intent(getContext(), EditArticleActivity.class);
+                    startActivity(intent);
+                }
             }
         });
 
@@ -72,7 +79,6 @@ public class InfoboardFragment extends Fragment {
         });
         //添加RecyclerView展示资讯列表
         articleRV = root.findViewById(R.id.article_rv);
-
         return root;
     }
 

@@ -27,7 +27,7 @@
                 android:text="手机号：" />
 
             <EditText
-                android:id="@+id/usernameRegister"
+                android:id="@+id/phoneNumberRegister"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:hint="请输入手机号" />
@@ -46,6 +46,21 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:hint="请输入密码" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="真实姓名：" />
+
+            <EditText
+                android:id="@+id/nameRegister"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:hint="请输入姓名" />
         </TableRow>
 
         <TableRow>
@@ -108,12 +123,39 @@
             </RadioGroup>
         </TableRow>
 
+
         <TableRow>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="性别："
+                android:textSize="20dp" />
+
+            <RadioGroup
+                android:id="@+id/roleRegister"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:checkedButton="@+id/role_student"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/role_student"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="学生" />
+
+                <RadioButton
+                    android:id="@+id/role_doctor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="医生" />
+            </RadioGroup>
+        </TableRow>
+        <TableRow>
             <TextView />
-
             <LinearLayout>
-
                 <Button
                     android:id="@+id/Register"
                     android:layout_width="150dp"

@@ -11,10 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.widget.SearchView;
+import java.util.HashMap;
+import java.util.Map;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
@@ -42,6 +43,8 @@ public class InfoboardFragment extends Fragment {
     private ArticleAdapter mArticleAdapter;
     private FloatingActionButton newArticleFAB;
     RecyclerView articleRV;
+    SearchView articleSV;
+    private String searchQuery;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -82,6 +85,35 @@ public class InfoboardFragment extends Fragment {
         });
         //添加RecyclerView展示资讯列表
         articleRV = root.findViewById(R.id.article_rv);
+
+        //添加SearchView实现资讯标题搜索功能
+        articleSV = (SearchView) root.findViewById(R.id.article_search);
+        articleSV.setIconifiedByDefault(true);
+        articleSV.setQueryHint("请输入查找内容");
+        articleSV.setSubmitButtonEnabled(true);
+        ImageView mSearchGoBtn = articleSV.findViewById(R.id.search_go_btn);
+
+        articleSV.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if (query.isEmpty())
+                {
+                    articleSV.setQueryHint("请输入查找内容");
+                }
+                else
+                {
+                    searchQuery = query;
+                    SearchArticleList searchArticleLists = new SearchArticleList();
+                    searchArticleLists.execute();
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
         return root;
     }
 
@@ -123,6 +155,57 @@ public class InfoboardFragment extends Fragment {
                     byte[] bitmapArray = Base64.decode(image, Base64.DEFAULT);
                     item_img = BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length);
                     mArticleList.add(new Article(title, tag, date, item_img));
+                }
+                //在网络线程里重新绘制RecyclerView
+                articleRV.setAdapter(mArticleAdapter);
+                LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
+                articleRV.setLayoutManager(layoutManager);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    //展示资讯标题搜索结果
+    class SearchArticleList extends FetchArticleList{
+        @Override
+        protected String doInBackground(Void... voids) {
+            mArticleList.clear();
+            SharedPreferences sp = getActivity().getSharedPreferences("token",0);
+            String token = sp.getString("token",null);
+            if (token == null){
+                Intent intent = new Intent(getContext(), LoginActivity.class);
+                startActivity(intent);
+            }
+            Map<String, String> params = new HashMap<>();
+            params.put("title", searchQuery);
+            return MyRequest.myPost("/articles/search", params, token);
+        }
+        @Override
+        protected void onPostExecute(String articles) {
+            try{
+                JSONObject contentJS = new JSONObject(articles);
+                int code = contentJS.getInt("code");
+                if (code == 404)
+                {
+                    mArticleList.add(new Article("无相关结果", "","",null));
+                }
+                else if(code == 200)
+                {
+                    String content = contentJS.getString("content");
+                    JSONArray jsonArray=new JSONArray(content);
+                    for(int i=jsonArray.length()-1; i>=0; i--)
+                    {
+                        JSONObject jsonObject=jsonArray.getJSONObject(i);
+                        String title=jsonObject.getString("title");
+                        String tag=jsonObject.getString("tag");
+                        String date=jsonObject.getString("date");
+                        String image=jsonObject.getString("image");
+                        Bitmap item_img;
+                        byte[] bitmapArray = Base64.decode(image, Base64.DEFAULT);
+                        item_img = BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length);
+                        mArticleList.add(new Article(title, tag, date, item_img));
+                    }
                 }
                 //在网络线程里重新绘制RecyclerView
                 articleRV.setAdapter(mArticleAdapter);

@@ -16,7 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
+import android.util.Log;
 import com.demo.navigationtest.LoginActivity;
 import com.demo.navigationtest.MyRequest;
 import com.demo.navigationtest.R;
@@ -25,23 +25,15 @@ import com.wx.goodview.GoodView;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONException;
-
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
-
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class ArticleDetailActivity extends AppCompatActivity {
 
     //资讯详情页的一些小组件
     private GoodView mGoodView; //引用这里的包 https://github.com/venshine/GoodView
     private TextView articleTitle, articleDate, articleContent, like_num;
-    private String articleID;
+    private String articleId;
     private ImageView articleImage;
     private boolean like_flag = false; //为了实现再次点击取消点赞的效果，需要flag判断是否点击过
     private EditText comment_edit_text;
@@ -139,7 +131,7 @@ public class ArticleDetailActivity extends AppCompatActivity {
             }
             // 填充POST所需参数
             Map<String, String> params = new HashMap<>();
-            params.put("articleID", articleID);
+            params.put("articleID", articleId);
             params.put("status", "0");  // 待审核
             params.put("user", userName[0]);
             params.put("date", articleDate.getText().toString());
@@ -154,7 +146,7 @@ public class ArticleDetailActivity extends AppCompatActivity {
         }
     }
 
-    //连接数据库，根据选中资讯的标题获取资讯图片和内容
+    //连接数据库，根据选中资讯的标题获取资讯图片和内容和ID
     class FetchArticleContent extends AsyncTask<Void, Void, String> {
         @Override
         protected void onPreExecute() {
@@ -183,7 +175,7 @@ public class ArticleDetailActivity extends AppCompatActivity {
                 JSONArray jsonArray=new JSONArray(content);
                 JSONObject jsonObject=jsonArray.getJSONObject(0);
                 String article_content = jsonObject.getString("article_content");
-                articleID = jsonObject.getString("_id");
+                articleId = jsonObject.getString("_id");
                 articleContent.setText(article_content);
                 Bitmap item_img;
                 byte[] bitmapArray = Base64.decode(jsonObject.getString("image"), Base64.DEFAULT);
@@ -192,6 +184,48 @@ public class ArticleDetailActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    //连接数据库，增加用户收藏
+    class AddArticleCollection extends AsyncTask<Void, Void, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            SharedPreferences sp = getSharedPreferences("token",0);
+            String token = sp.getString("token",null);
+            if (token == null){
+                Intent intent = new Intent(ArticleDetailActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+            Map<String, String> params = new HashMap<>();
+            params.put("_id", articleId);
+            return MyRequest.myPost("/users/collections/add", params, token);
+        }
+    }
+
+    //连接数据库，删除用户收藏
+    class RemoveArticleCollection extends AsyncTask<Void, Void, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            SharedPreferences sp = getSharedPreferences("token",0);
+            String token = sp.getString("token",null);
+            if (token == null){
+                Intent intent = new Intent(ArticleDetailActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+            Map<String, String> params = new HashMap<>();
+            params.put("_id", articleId);
+            return MyRequest.myPost("/users/collections/delete", params, token);
         }
     }
 
@@ -213,7 +247,8 @@ public class ArticleDetailActivity extends AppCompatActivity {
             like_flag = false;
         }
     }
-    //copy自GoodView提供者的demo，仅实现了收藏效果，没有关联用户收藏栏
+
+    //实现了收藏效果，关联用户收藏栏
     //TODO: 5. 实现收藏功能
     public void bookmark(View view) {
         if (!bookmark_flag) {
@@ -221,14 +256,19 @@ public class ArticleDetailActivity extends AppCompatActivity {
             mGoodView.setTextInfo("收藏成功", Color.parseColor("#ff941A"), 12);
             mGoodView.show(view);
             bookmark_flag = true;
+            AddArticleCollection addArticleCollection = new AddArticleCollection();
+            addArticleCollection.execute();
         }
         else {
             ((ImageView) view).setImageResource(R.drawable.bookmark);
             bookmark_flag = false;
+            RemoveArticleCollection removeArticleCollection = new RemoveArticleCollection();
+            removeArticleCollection.execute();
         }
     }
     //TODO: 6. 实现分享功能，可参考"利用 Android 系统原生 API 实现分享功能" https://www.jianshu.com/p/1d4bd2c5ef69
     public void share(View view) {
+        //((ImageView) view).setImageResource(R.drawable.share);
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         // 指定发送的内容

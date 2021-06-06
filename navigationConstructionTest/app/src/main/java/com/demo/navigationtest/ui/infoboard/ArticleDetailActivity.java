@@ -8,15 +8,21 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Base64;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import android.util.Log;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.demo.navigationtest.LoginActivity;
 import com.demo.navigationtest.MyRequest;
 import com.demo.navigationtest.R;
@@ -25,7 +31,10 @@ import com.wx.goodview.GoodView;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONException;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ArticleDetailActivity extends AppCompatActivity {
@@ -40,6 +49,10 @@ public class ArticleDetailActivity extends AppCompatActivity {
     private Button comment_btn;
     private boolean bookmark_flag = false, mask_flag = false;
 
+    // 显示评论列表
+    private List<Comment> mCommentList = new ArrayList<>();
+    private CommentAdapter mCommentAdapter;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,8 +66,11 @@ public class ArticleDetailActivity extends AppCompatActivity {
         articleDate.setText(intent.getStringExtra("date"));
         articleImage = findViewById(R.id.article_detail_img);
         articleContent = findViewById(R.id.article_content);
-        FetchArticleContent fetchArticleContent = new FetchArticleContent();
+        FetchArticleContent fetchArticleContent = new FetchArticleContent();    // 包括获取评论
         fetchArticleContent.execute();
+
+        //设置适配器
+        mCommentAdapter = new CommentAdapter(mCommentList);
 
         mGoodView = new GoodView(this);
         //实现评论功能
@@ -140,6 +156,23 @@ public class ArticleDetailActivity extends AppCompatActivity {
                 if (mask_flag)
                     view.setImageResource(R.drawable.mask_checked);
                 else view.setImageResource(R.drawable.mask);
+                // 获取评论列表
+                String comments = contentJS.getString("comments");
+                JSONArray jsonArray = new JSONArray(comments);
+                for(int i=jsonArray.length()-1; i>=0; i--)
+                {
+                    JSONObject commentObject=jsonArray.getJSONObject(i);
+                    String ID = commentObject.getString("_id");
+                    String articleID = commentObject.getString("articleID");
+                    String context = commentObject.getString("context");
+                    String date = commentObject.getString("date");
+                    String user = commentObject.getString("user");
+                    mCommentList.add(new Comment(ID, articleID, context, date, user));
+                }
+                //在网络线程里重新绘制RecyclerView
+                RecyclerView commentRV = findViewById(R.id.comment_rv);
+                commentRV.setLayoutManager(new LinearLayoutManager(getBaseContext()));
+                commentRV.setAdapter(mCommentAdapter);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -211,48 +244,6 @@ public class ArticleDetailActivity extends AppCompatActivity {
         }
     }
 
-    //连接数据库，增加用户收藏
-    /*class AddArticleCollection extends AsyncTask<Void, Void, String> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected String doInBackground(Void... voids) {
-            SharedPreferences sp = getSharedPreferences("token",0);
-            String token = sp.getString("token",null);
-            if (token == null){
-                Intent intent = new Intent(ArticleDetailActivity.this, LoginActivity.class);
-                startActivity(intent);
-            }
-            Map<String, String> params = new HashMap<>();
-            params.put("_id", articleId);
-            return MyRequest.myPost("/users/collections/add", params, token);
-        }
-    }*/
-
-    //连接数据库，删除用户收藏
-    /*class RemoveArticleCollection extends AsyncTask<Void, Void, String> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected String doInBackground(Void... voids) {
-            SharedPreferences sp = getSharedPreferences("token",0);
-            String token = sp.getString("token",null);
-            if (token == null){
-                Intent intent = new Intent(ArticleDetailActivity.this, LoginActivity.class);
-                startActivity(intent);
-            }
-            Map<String, String> params = new HashMap<>();
-            params.put("_id", articleId);
-            return MyRequest.myPost("/users/collections/delete", params, token);
-        }
-    }*/
-
     //实现点赞功能
     public void good(View view) {
         like_num = findViewById(R.id.article_like_num);
@@ -305,7 +296,6 @@ public class ArticleDetailActivity extends AppCompatActivity {
     }
 
     //实现了收藏效果，关联用户收藏栏
-    //TODO: 5. 实现收藏功能连接到用户
     public void bookmark(View view) {
         if (!bookmark_flag) {
             ((ImageView) view).setImageResource(R.drawable.bookmark_checked);
@@ -354,10 +344,11 @@ public class ArticleDetailActivity extends AppCompatActivity {
     }
     //TODO: 6. 实现分享功能，可参考"利用 Android 系统原生 API 实现分享功能" https://www.jianshu.com/p/1d4bd2c5ef69
     public void share(View view) {
+        String sendContent = articleTitle.getText().toString();
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         // 指定发送的内容
-        sendIntent.putExtra(Intent.EXTRA_TEXT, "文章很有用，快来浙大校医院导航APP看！");
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "《"+sendContent+"》很有用，快来校医院健康导航APP看！");
         // 指定发送内容的类型
         sendIntent.setType("text/plain");
         startActivity(Intent.createChooser(sendIntent, "分享到..."));
@@ -407,6 +398,57 @@ public class ArticleDetailActivity extends AppCompatActivity {
                 }
             };
             addLike.start();
+        }
+    }
+
+    // 实现comment的viewholder
+    private static class CommentVH extends RecyclerView.ViewHolder {
+        private ImageView comment_pass, comment_fail;
+        private TextView comment_context, comment_date, comment_user;
+        // constructor
+        public CommentVH(@NonNull View itemView) {
+            super(itemView);
+            comment_context = itemView.findViewById(R.id.comment_context);
+            comment_date = itemView.findViewById(R.id.comment_date);
+            comment_user = itemView.findViewById(R.id.comment_user);
+            comment_pass = itemView.findViewById(R.id.comment_pass);
+            comment_fail = itemView.findViewById(R.id.comment_fail);
+            comment_pass.setVisibility(View.INVISIBLE);
+            comment_fail.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    // 实现comment的adapter
+    private static class CommentAdapter extends RecyclerView.Adapter<CommentVH> {
+        // RecyclerView管理的资讯列表
+        final private List<Comment> commentList;
+
+        //        //声明自定义的点击事件监听器接口
+//        private InfoboardFragment.ArticleAdapter.IOnItemClickListener mItemClickListener;
+        // constructor
+        public CommentAdapter(List<Comment> commentList) {
+            this.commentList = commentList;
+        }
+
+        @NonNull
+        @Override
+        public CommentVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            return new CommentVH(LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_audit_comment, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull CommentVH holder, final int position) {
+            // 绑定item的各项控件
+            Comment comment = commentList.get(position);
+            holder.comment_context.setText(comment.context);
+            holder.comment_date.setText(comment.date);
+            holder.comment_user.setText(comment.user);
+        }
+
+        @Override
+        public int getItemCount() {
+            return commentList.size();
         }
     }
 }

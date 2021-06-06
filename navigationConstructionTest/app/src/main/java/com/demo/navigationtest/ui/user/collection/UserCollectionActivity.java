@@ -35,8 +35,7 @@ public class UserCollectionActivity extends AppCompatActivity {
 
     private List<Article> mArticleList = new ArrayList<>();
     private ArticleAdapter mArticleAdapter;
-    private FloatingActionButton newArticleFAB;
-    RecyclerView articleRV;
+    private RecyclerView articleRV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,8 +151,7 @@ public class UserCollectionActivity extends AppCompatActivity {
             holder.article_title.setText(article.title);
             holder.article_tag.setText(article.tag);
             holder.article_date.setText(article.date);
-            //TODO:2.还没处理好上传图片问题，暂时先不绑定图片
-            //holder.article_img.setImageURI(Uri.parse(article.imageURI));
+            holder.article_img.setImageBitmap(article.image);
 
             //点击某条资讯查看具体内容
             holder.itemView.setOnClickListener(new View.OnClickListener() {

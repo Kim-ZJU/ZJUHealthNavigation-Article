@@ -54,7 +54,7 @@
                 android:id="@+id/article_detail_img"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:src="@drawable/toothache"/>
+                android:src="@mipmap/ic_launcher"/>
 
             <TextView
                 android:id="@+id/article_content"
@@ -64,10 +64,15 @@
                 android:layout_marginEnd="10dp"
                 android:lineSpacingExtra="2dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="105dp"
+                android:layout_marginBottom="20dp"
                 android:textSize="18sp"
                 android:textColor="@color/colorBlack"
                 android:text="@string/article_content_tmp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/comment_rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 
@@ -77,7 +82,8 @@
         android:layout_width="match_parent"
         android:layout_height="105dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignBottom="@+id/up_panel">
+        android:layout_alignBottom="@+id/up_panel"
+        android:background="@color/White">
 
         <View
             android:layout_width="match_parent"
